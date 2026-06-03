@@ -204,21 +204,23 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Brand Story Banner */}
+        {/* Câu chuyện thương hiệu */}
         <section className="py-4">
-          <div className="bg-primary-container rounded-xl p-8 flex flex-col items-center text-center space-y-4">
+          <Link
+            to="/gioi-thieu"
+            className="bg-primary-container rounded-xl p-8 flex flex-col items-center text-center space-y-4 block active:scale-[0.99] transition-transform hover:opacity-95"
+          >
             <span className="material-symbols-outlined text-primary-fixed-dim text-4xl">history_edu</span>
-            <h3 className="font-beVietnamPro font-bold text-primary-fixed text-[20px]">Câu chuyện AoVie</h3>
+            <h3 className="font-beVietnamPro font-bold text-primary-fixed text-[20px]">
+              Câu chuyện thương hiệu
+            </h3>
             <p className="font-beVietnamPro text-primary-fixed-dim text-[13px] leading-relaxed max-w-[280px]">
-              Kết nối hơi thở đường phố hiện đại với những giá trị hoài cổ của Việt Nam.
+              Nét hoài niệm trong dòng chảy hiện đại — cảm hứng từ Nón Lá và Bánh Mì Việt Nam.
             </p>
-            <Link
-              className="bg-background text-primary px-6 py-2.5 rounded-full font-beVietnamPro text-[12px] font-bold uppercase tracking-widest active:scale-95 transition-transform"
-              to="/danh-muc"
-            >
-              KHÁM PHÁ NGAY
-            </Link>
-          </div>
+            <span className="bg-background text-primary px-6 py-2.5 rounded-full font-beVietnamPro text-[12px] font-bold uppercase tracking-widest">
+              ĐỌC CÂU CHUYỆN
+            </span>
+          </Link>
         </section>
       </main>
 
