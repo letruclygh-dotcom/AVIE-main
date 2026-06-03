@@ -116,7 +116,7 @@ export default function HomePage() {
                 Lấy cảm hứng từ góc tiệm may Saigon cổ kính dưới vệt nắng chiếu nghiêng ấm áp, kiến tạo chất liệu đương đại mộc mạc và sang trọng.
               </p>
               <button
-                onClick={() => navigate("/bo-loc")}
+                onClick={() => navigate("/danh-muc")}
                 className="mt-4 bg-secondary text-white py-3 px-6 rounded font-label-md text-label-md uppercase tracking-wider font-bold shadow-md hover:bg-secondary/95 active:scale-95 transition-all w-fit"
               >
                 KHÁM PHÁ NGAY
@@ -162,7 +162,7 @@ export default function HomePage() {
           <div className="flex justify-between items-end mb-6">
             <h3 className="font-headline-md text-primary font-bold">Sản phẩm nổi bật</h3>
             <button
-              onClick={() => navigate("/bo-loc")}
+              onClick={() => navigate("/danh-muc")}
               className="text-label-md font-label-md text-secondary border-b border-secondary font-bold tracking-wider hover:text-secondary/80"
             >
               XEM TẤT CẢ
@@ -247,7 +247,7 @@ export default function HomePage() {
           <div className="absolute -bottom-1 w-1 h-1 bg-secondary rounded-full"></div>
         </button>
         <button
-          onClick={() => handleBottomNav("/bo-loc")}
+          onClick={() => handleBottomNav("/danh-muc")}
           className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-95 w-16"
         >
           <span className="material-symbols-outlined">grid_view</span>

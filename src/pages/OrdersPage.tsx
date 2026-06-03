@@ -324,7 +324,7 @@ export default function OrdersPage() {
             <span className="font-label-md text-[10px] mt-1 font-sans">Trang chủ</span>
           </button>
           <button
-            onClick={() => navigate("/bo-loc")}
+            onClick={() => navigate("/danh-muc")}
             className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-90 w-16"
           >
             <span className="material-symbols-outlined">grid_view</span>

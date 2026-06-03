@@ -214,7 +214,7 @@ export default function AboutPage() {
           <span className="font-label-md text-[10px] mt-1 font-semibold">Trang chủ</span>
         </button>
         <button
-          onClick={() => handleBottomNav("/bo-loc")}
+          onClick={() => handleBottomNav("/danh-muc")}
           className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-95 w-16"
         >
           <span className="material-symbols-outlined">grid_view</span>

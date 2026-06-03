@@ -61,6 +61,14 @@ export default function HubPage() {
       badgeColor: "bg-surface-variant text-on-surface-variant",
     },
     {
+      path: "/danh-muc",
+      title: "Danh mục sản phẩm",
+      desc: "Màn hình danh mục sản phẩm của AoVie với thiết kế tối giản, lưới sản phẩm 2 cột và bộ lọc nhanh gọn.",
+      icon: "grid_view",
+      badge: "Mới Thiết Kế",
+      badgeColor: "bg-secondary-fixed text-on-secondary-container font-bold",
+    },
+    {
       path: "/dat-hang-thanh-cong",
       title: "Đặt hàng thành công",
       desc: "Màn hình thông báo giao dịch thành công sang trọng kèm mã đơn hàng tỉ mỉ.",

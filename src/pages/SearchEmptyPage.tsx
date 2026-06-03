@@ -95,7 +95,7 @@ export default function SearchEmptyPage() {
           <div className="flex justify-between items-end mb-6">
             <h2 className="font-headline-md text-headline-md text-primary font-bold">Sản phẩm gợi ý cho bạn</h2>
             <button
-              onClick={() => navigate("/bo-loc")}
+              onClick={() => navigate("/danh-muc")}
               className="text-label-md font-label-md text-secondary border-b border-secondary font-bold tracking-wider hover:text-secondary/80"
             >
               XEM TẤT CẢ
@@ -187,7 +187,7 @@ export default function SearchEmptyPage() {
           <span className="font-label-md text-[10px] uppercase font-semibold">Trang chủ</span>
         </button>
         <button
-          onClick={() => handleBottomNav("/bo-loc")}
+          onClick={() => handleBottomNav("/danh-muc")}
           className="flex flex-col items-center justify-center text-secondary relative active:scale-95 w-16"
         >
           <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>

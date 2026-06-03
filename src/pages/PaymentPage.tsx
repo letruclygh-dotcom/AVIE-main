@@ -295,7 +295,7 @@ export default function PaymentPage() {
           </button>
           {/* Danh mục */}
           <button
-            onClick={() => navigate("/bo-loc")}
+            onClick={() => navigate("/danh-muc")}
             className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-90 w-16"
           >
             <span className="material-symbols-outlined">grid_view</span>

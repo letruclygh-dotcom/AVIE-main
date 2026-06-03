@@ -22,11 +22,13 @@ import OrdersPage from "./pages/OrdersPage";
 import RatingPage from "./pages/RatingPage";
 import OrderDetailPage from "./pages/OrderDetailPage";
 import AboutPage from "./pages/AboutPage";
+import CategoryPage from "./pages/CategoryPage";
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<SplashPage />} />
+      <Route path="/danh-muc" element={<CategoryPage />} />
       <Route path="/hub" element={<HubPage />} />
       <Route path="/gioi-thieu" element={<AboutPage />} />
       <Route path="/trang-chu" element={<HomePage />} />

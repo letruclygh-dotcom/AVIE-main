@@ -223,7 +223,7 @@ export default function PolicyPage() {
           <span className="font-label-md text-label-md">Trang chủ</span>
         </button>
         <button
-          onClick={() => handleBottomNav("/bo-loc")}
+          onClick={() => handleBottomNav("/danh-muc")}
           className="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors w-16"
         >
           <span className="material-symbols-outlined">grid_view</span>
