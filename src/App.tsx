@@ -11,6 +11,7 @@ import SuccessPage from "./pages/SuccessPage";
 import PolicyPage from "./pages/PolicyPage";
 import WalletPage from "./pages/WalletPage";
 import ProfilePage from "./pages/ProfilePage";
+import ProfileSettingsPage from "./pages/ProfileSettingsPage";
 import ErrorPage from "./pages/ErrorPage";
 import TrackingPage from "./pages/TrackingPage";
 import SearchEmptyPage from "./pages/SearchEmptyPage";
@@ -41,6 +42,7 @@ export default function App() {
       <Route path="/chinh-sach" element={<PolicyPage />} />
       <Route path="/vi-tien" element={<WalletPage />} />
       <Route path="/toi" element={<ProfilePage />} />
+      <Route path="/thong-tin-ca-nhan" element={<ProfileSettingsPage />} />
       <Route path="/loi" element={<ErrorPage />} />
       <Route path="/theo-doi-don-hang" element={<TrackingPage />} />
       <Route path="/tim-kiem" element={<SearchEmptyPage />} />

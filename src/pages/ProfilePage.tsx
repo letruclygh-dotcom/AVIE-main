@@ -95,7 +95,7 @@ export default function ProfilePage() {
           <div className="flex flex-col">
             {/* Account Info */}
             <button
-              onClick={() => alert("Thông tin tài khoản khách hàng Nguyễn Văn A.")}
+              onClick={() => navigate("/thong-tin-ca-nhan")}
               className="flex items-center justify-between p-4 border-b border-outline-variant/20 hover:bg-surface-container-low transition-colors text-left"
             >
               <div className="flex items-center gap-3">
@@ -165,7 +165,7 @@ export default function ProfilePage() {
 
             {/* App Settings */}
             <button
-              onClick={() => alert("Mở tùy chỉnh ngôn ngữ, cấu hình bảo mật...")}
+              onClick={() => navigate("/thong-tin-ca-nhan")}
               className="flex items-center justify-between p-4 border-b border-outline-variant/20 hover:bg-surface-container-low transition-colors text-left"
             >
               <div className="flex items-center gap-3">
