@@ -28,6 +28,15 @@ const MOCK_NOTIFICATIONS: Notification[] = [
     id: "n2",
     category: "promo",
     icon: "sell",
+    title: "Ưu Đãi Đậm Chất Việt – Sắm Áo Thun Và Túi Canvas Cùng AoVie",
+    body: "Giảm 15% cho khách hàng mới với mã AOVIENEW. Khám phá áo thun và túi canvas mang bản sắc Việt.",
+    time: "24 THÁNG 5, 2026 • 09:30 AM",
+    read: false,
+  },
+  {
+    id: "n2b",
+    category: "promo",
+    icon: "sell",
     title: "Flash Sale Áo Dài Cổ Điển — Giảm 30%",
     body: "Chỉ còn 2 giờ! Săn ngay BST áo dài Thu Đông 2025 với ưu đãi lên đến 30%.",
     time: "1 giờ trước",
@@ -215,9 +224,14 @@ export default function NotificationPage() {
                     <p className="font-body-md text-body-md text-on-surface-variant text-xs leading-relaxed mt-1 line-clamp-2">
                       {notif.body}
                     </p>
-                    <p className="font-label-md text-[10px] text-outline uppercase tracking-wide mt-1.5">
-                      {notif.time}
-                    </p>
+                    <div className="flex items-center justify-between mt-1.5 gap-2">
+                      <p className="font-label-md text-[10px] text-outline uppercase tracking-wide">
+                        {notif.time}
+                      </p>
+                      <span className="material-symbols-outlined text-outline text-[18px] shrink-0">
+                        chevron_right
+                      </span>
+                    </div>
                   </div>
                 </button>
               </li>

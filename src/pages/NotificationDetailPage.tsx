@@ -1,7 +1,7 @@
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import GrainTexture from "../components/GrainTexture";
 
-interface Notification {
+export interface NotificationItem {
   id: string;
   category: "order" | "promo" | "system";
   icon: string;
@@ -11,201 +11,221 @@ interface Notification {
   read: boolean;
 }
 
-const CATEGORY_LABEL: Record<string, string> = {
-  order: "Đơn hàng",
-  promo: "Khuyến mãi",
-  system: "Hệ thống",
-};
-
-const CATEGORY_COLOR: Record<string, string> = {
-  order: "bg-secondary-fixed text-on-secondary-container",
-  promo: "bg-error-container text-on-error-container",
-  system: "bg-surface-variant text-on-surface-variant",
-};
-
-// Suggested actions per category
-const ACTIONS: Record<string, { label: string; icon: string; onClick?: () => void }[]> = {
-  order: [
-    { label: "Theo dõi đơn hàng", icon: "local_shipping" },
-    { label: "Liên hệ shipper", icon: "call" },
-  ],
-  promo: [
-    { label: "Mua ngay", icon: "shopping_bag" },
-    { label: "Sao chép mã giảm giá", icon: "content_copy" },
-  ],
-  system: [
-    { label: "Cập nhật ngay", icon: "system_update" },
-    { label: "Xem chi tiết", icon: "open_in_new" },
-  ],
-};
-
-// Default notification if navigated directly without state (demo fallback)
-const DEFAULT_NOTIF: Notification = {
-  id: "demo",
-  category: "order",
-  icon: "local_shipping",
-  title: "Đơn hàng #AV-20250312 đang giao",
-  body:
-    "Đơn hàng của bạn đã rời kho lúc 08:30 sáng và hiện đang trên đường giao tới địa chỉ của bạn. Shipper sẽ liên hệ trước khi đến khoảng 15–30 phút. Vui lòng giữ điện thoại ở trạng thái sẵn sàng.",
-  time: "5 phút trước",
-  read: true,
+const PROMO_DEFAULT = {
+  title: "Ưu Đãi Đậm Chất Việt – Sắm Áo Thun Và Túi Canvas Cùng AoVie",
+  time: "24 THÁNG 5, 2026 • 09:30 AM",
+  datetime: "2026-05-24",
+  badge: "Khuyến mãi",
 };
 
 export default function NotificationDetailPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const notif: Notification = (location.state as any)?.notif ?? DEFAULT_NOTIF;
-  const actions = ACTIONS[notif.category] ?? [];
+  const notif = (location.state as { notif?: NotificationItem } | null)?.notif;
+
+  const [headerScrolled, setHeaderScrolled] = useState(false);
+
+  const title = notif?.title ?? PROMO_DEFAULT.title;
+  const displayTime = notif?.time ?? PROMO_DEFAULT.time;
+  const badgeLabel =
+    notif?.category === "order"
+      ? "Đơn hàng"
+      : notif?.category === "system"
+        ? "Hệ thống"
+        : PROMO_DEFAULT.badge;
+
+  useEffect(() => {
+    const onScroll = () => {
+      setHeaderScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <div className="bg-background text-on-surface min-h-screen flex flex-col font-sans relative antialiased select-none">
-      <GrainTexture />
+    <div className="notification-detail-page bg-background text-on-surface antialiased min-h-screen">
+      <div className="grainy-overlay" aria-hidden="true"></div>
 
-      {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-background border-b border-outline-variant shrink-0">
-        <div className="flex justify-between items-center px-container-padding h-16 w-full max-w-screen-xl mx-auto">
+      {/* Top AppBar */}
+      <header
+        className={`fixed top-0 w-full z-50 border-b border-outline-variant h-16 flex items-center px-container-padding transition-all ${
+          headerScrolled ? "shadow-sm bg-background/95 backdrop-blur-md" : "bg-background"
+        }`}
+      >
+        <div className="max-w-screen-xl mx-auto w-full flex justify-between items-center">
           <button
-            className="hover:opacity-80 transition-opacity active:scale-95 flex items-center justify-center w-10 h-10"
-            onClick={() => navigate(-1)}
             type="button"
+            aria-label="Go back"
+            className="w-10 h-10 flex items-center justify-start text-primary active:scale-95 transition-transform"
+            onClick={() => navigate(-1)}
+            onTouchStart={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.opacity = "0.5";
+            }}
+            onTouchEnd={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.opacity = "1";
+            }}
           >
-            <span className="material-symbols-outlined text-primary">arrow_back</span>
+            <span className="material-symbols-outlined">arrow_back</span>
           </button>
-          <h1 className="font-headline-lg-mobile text-primary uppercase text-headline-md tracking-wider whitespace-nowrap">
-            Chi tiết thông báo
+          <h1 className="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">
+            Chi tiết
           </h1>
           <button
-            className="hover:opacity-80 transition-opacity active:scale-95 flex items-center justify-center w-10 h-10 text-outline"
             type="button"
-            onClick={() => alert("Đã xóa thông báo này.")}
-            title="Xóa thông báo"
+            className="w-10 h-10 flex items-center justify-end text-primary active:scale-95 transition-transform"
           >
-            <span className="material-symbols-outlined text-[22px]">delete_outline</span>
+            <span className="material-symbols-outlined">more_vert</span>
           </button>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-grow pt-20 pb-28 px-container-padding max-w-md mx-auto w-full flex flex-col gap-6 mt-2">
-        {/* Notification Card */}
-        <section className="bg-surface border border-outline-variant rounded-lg overflow-hidden shadow-xs">
-          {/* Category Banner */}
-          <div
-            className={`flex items-center gap-2 px-4 py-2.5 ${CATEGORY_COLOR[notif.category]}`}
-          >
-            <span className="material-symbols-outlined text-[16px]">{notif.icon}</span>
-            <span className="font-label-md text-[10px] uppercase tracking-wider font-bold">
-              {CATEGORY_LABEL[notif.category]}
-            </span>
-            <span className="ml-auto font-label-md text-[10px] uppercase tracking-wide opacity-70">
-              {notif.time}
-            </span>
-          </div>
-
-          {/* Title + Body */}
-          <div className="p-5 flex flex-col gap-3">
-            <h2 className="font-headline-md text-primary text-[18px] font-bold leading-snug">
-              {notif.title}
-            </h2>
-            <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-              {notif.body}
-            </p>
-          </div>
-        </section>
-
-        {/* Timeline / Detail steps (for order category) */}
-        {notif.category === "order" && (
-          <section className="bg-surface border border-outline-variant rounded-lg p-5 flex flex-col gap-1 shadow-xs">
-            <h3 className="font-headline-md text-primary uppercase tracking-wider text-xs font-bold mb-3">
-              Trạng thái đơn hàng
-            </h3>
-            {[
-              { icon: "task_alt", label: "Đơn hàng đã đặt thành công", sub: "12/03/2025 — 08:00", done: true },
-              { icon: "inventory_2", label: "Đang đóng gói hàng hóa", sub: "12/03/2025 — 10:15", done: true },
-              { icon: "local_shipping", label: "Đang vận chuyển", sub: "12/03/2025 — 08:30", done: true, active: true },
-              { icon: "home", label: "Giao hàng thành công", sub: "Dự kiến hôm nay", done: false },
-            ].map((step, i) => (
-              <div key={i} className="flex items-start gap-3 relative">
-                {/* Connector line */}
-                {i < 3 && (
-                  <div className="absolute left-[11px] top-7 bottom-0 w-[2px] bg-outline-variant/30" />
-                )}
-                <div
-                  className={`shrink-0 w-6 h-6 rounded-full flex items-center justify-center z-10 mt-0.5 ${
-                    step.active
-                      ? "bg-secondary text-white"
-                      : step.done
-                      ? "bg-secondary-fixed text-on-secondary-container"
-                      : "bg-surface-container-low text-outline border border-outline-variant"
-                  }`}
-                >
-                  <span className="material-symbols-outlined text-[14px]">{step.icon}</span>
-                </div>
-                <div className="flex-grow pb-4">
-                  <p
-                    className={`font-body-md text-sm leading-tight ${
-                      step.active ? "text-primary font-bold" : step.done ? "text-on-surface" : "text-outline"
-                    }`}
-                  >
-                    {step.label}
-                  </p>
-                  <p className="font-label-md text-[10px] text-outline uppercase tracking-wide mt-0.5">
-                    {step.sub}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </section>
-        )}
-
-        {/* Promo detail */}
-        {notif.category === "promo" && (
-          <section className="bg-surface border border-outline-variant rounded-lg p-5 flex flex-col gap-3 shadow-xs">
-            <h3 className="font-headline-md text-primary uppercase tracking-wider text-xs font-bold">
-              Chi tiết ưu đãi
-            </h3>
-            <div className="bg-error-container/30 border border-error-container rounded p-3 flex flex-col gap-1">
-              <p className="font-label-md text-[10px] uppercase tracking-wider text-on-error-container font-bold">
-                Mã giảm giá
-              </p>
-              <p className="font-display-lg text-error text-xl font-bold tracking-widest">AOVIE30</p>
+      {/* Main Content Canvas */}
+      <main className="pt-16 pb-24 min-h-screen relative z-10">
+        <div className="max-w-2xl mx-auto">
+          {/* Hero Image Section */}
+          <div className="relative w-full aspect-[16/9] overflow-hidden">
+            <img
+              alt="Vietnam cultural collage"
+              className="w-full h-full object-cover"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVkizBRZAm3qq7JiuOfsUfv5Y66f3i5XAqpYFleneO5FIDG-XRfUE0fJkZSVaEBtjUCFPxSUDwiNRL4L7jlpbi4gAHigrhdi52fpCvIetQNNIkV31cUvZvNO62FK_vHPiQSfIjSFhD9fLgiEkd7AV7YFmiWDQUsPZxQsacCdFgYyF5Tng4h9f0HK-0i_sivDODZ_obghAddCOc6qF64rl1Nr8kRtMne9ufOF5CccMlAqyzYQ8TgbuG8QQZxrc8uQ7hIQIO5PD5gj4"
+            />
+            <div className="absolute top-4 left-4">
+              <span className="bg-secondary text-on-secondary px-3 py-1 font-label-md text-label-md rounded-sm uppercase tracking-wider">
+                {badgeLabel}
+              </span>
             </div>
-            <p className="font-body-md text-body-md text-on-surface-variant text-xs leading-relaxed">
-              Áp dụng cho đơn hàng từ <strong>500.000đ</strong>. Không áp dụng cùng các ưu đãi khác.
-              Hạn sử dụng: <strong>31/12/2025</strong>.
-            </p>
-          </section>
-        )}
+          </div>
 
-        {/* Action Buttons */}
-        <section className="flex flex-col gap-3">
-          {actions.map((action, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => {
-                if (action.label.includes("Theo dõi")) navigate("/theo-doi-don-hang");
-                else if (action.label.includes("Mua ngay")) navigate("/trang-chu");
-                else alert(`${action.label}...`);
-              }}
-              className={`flex items-center justify-center gap-2 w-full py-3 rounded-lg font-label-md text-xs uppercase tracking-wider font-bold transition-all active:scale-[0.98] ${
-                i === 0
-                  ? "bg-primary text-white hover:opacity-90 shadow-sm"
-                  : "bg-surface border border-outline-variant text-primary hover:bg-surface-container-low"
-              }`}
-            >
-              <span className="material-symbols-outlined text-[18px]">{action.icon}</span>
-              {action.label}
-            </button>
-          ))}
-          <button
-            type="button"
-            onClick={() => navigate("/thong-bao")}
-            className="text-center font-label-md text-[10px] uppercase tracking-wider text-outline hover:text-primary transition-colors mt-1"
-          >
-            ← Quay lại danh sách thông báo
-          </button>
-        </section>
+          {/* Content Container */}
+          <article className="px-container-padding pt-8">
+            {/* Header Info */}
+            <header className="mb-8">
+              <div className="flex items-center gap-2 mb-3 text-on-surface-variant">
+                <span className="material-symbols-outlined text-[18px]">calendar_today</span>
+                <time className="font-label-md text-label-md tracking-wide" dateTime={PROMO_DEFAULT.datetime}>
+                  {displayTime}
+                </time>
+              </div>
+              <h2 className="font-headline-lg text-headline-lg text-primary leading-tight mb-4">{title}</h2>
+              <div className="h-px w-12 bg-secondary mb-6"></div>
+            </header>
+
+            {/* Detailed Body */}
+            <section className="space-y-6 text-on-surface-variant font-body-lg text-body-lg leading-relaxed">
+              {notif?.body && notif.category !== "promo" ? (
+                <p>{notif.body}</p>
+              ) : (
+                <>
+                  <p>
+                    Chào bạn,&nbsp;AoVie mang đến chương trình ưu đãi đặc biệt dành cho những ai yêu thích phong
+                    cách thời trang trẻ trung, gần gũi và mang dấu ấn văn hóa Việt.Các sản phẩm áo thun và túi
+                    canvas của AoVie được lấy cảm hứng từ những hình ảnh quen thuộc trong đời sống Việt Nam, kết
+                    hợp cùng tinh thần retro hiện đại để tạo nên vẻ ngoài vừa cá tính, vừa dễ ứng dụng hằng ngày.
+                  </p>
+                  <p>
+                    Đây là dịp phù hợp để bạn chọn cho mình những thiết kế mang bản sắc riêng, vừa làm mới phong
+                    cách cá nhân, vừa lan tỏa niềm tự hào về văn hóa Việt qua từng món đồ thời trang. Mỗi món đồ
+                    đều được chăm chút tỉ mỉ từ chất liệu vải đũi tự nhiên đến những đường may thủ công đặc
+                    trưng. Đây không chỉ là trang phục, mà là lời kể về một thời đại rực rỡ qua lăng kính thời
+                    trang đương đại.
+                  </p>
+                </>
+              )}
+
+              {/* Feature Box */}
+              <div className="bg-surface-container-low border border-outline-variant p-6 my-8 rounded-lg">
+                <h3 className="font-headline-md text-headline-md text-primary mb-4">Thông tin ưu đãi:</h3>
+                <ul className="space-y-4">
+                  <li className="flex items-start gap-3">
+                    <span className="material-symbols-outlined text-secondary">check_circle</span>
+                    <span>
+                      Giảm giá trực tiếp <strong>15%</strong>&nbsp;tất cả sản phẩm dành cho khách hàng mới.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="material-symbols-outlined text-secondary">check_circle</span>
+                    <span>
+                      Mã ưu đãi:{" "}
+                      <strong className="text-secondary tracking-[0.1em] font-bold">AOVIENEW</strong>
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="material-symbols-outlined text-secondary">check_circle</span>
+                    <span>Thời gian áp dụng: Từ nay đến hết 31/10/2026.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <p>
+                Khám phá AoVie ngay hôm nay để chọn cho mình những chiếc áo thun và túi canvas mang đậm tinh thần
+                Việt, trẻ trung và khác biệt.
+              </p>
+            </section>
+
+            {/* Action Button */}
+            <footer className="mt-12 mb-16">
+              <button
+                type="button"
+                className="w-full bg-primary text-on-primary py-4 font-label-md text-label-md uppercase tracking-[0.2em] rounded-sm hover:opacity-90 active:scale-[0.98] transition-all shadow-sm"
+                onClick={() => navigate("/danh-muc")}
+              >
+                Khám phá bộ sưu tập Aovie ngay
+              </button>
+              <div className="mt-8 flex justify-center items-center gap-6">
+                <button
+                  type="button"
+                  className="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md uppercase tracking-widest hover:text-secondary transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[20px]">share</span> Chia sẻ
+                </button>
+                <div className="w-px h-4 bg-outline-variant"></div>
+                <button
+                  type="button"
+                  className="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md uppercase tracking-widest hover:text-secondary transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[20px]">archive</span> Lưu tin
+                </button>
+              </div>
+            </footer>
+          </article>
+
+          {/* Related Items (Bento Style) */}
+          <aside className="px-container-padding mb-12">
+            <h4 className="font-label-md text-label-md text-on-surface-variant uppercase tracking-[0.2em] mb-6">
+              Có thể bạn quan tâm
+            </h4>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                className="relative group cursor-pointer overflow-hidden aspect-square rounded-sm text-left"
+                onClick={() => navigate("/trang-chu")}
+              >
+                <img
+                  alt="Áo thun Bánh Mì"
+                  className="w-full h-full object-cover"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBdVUh5Xt0oEpPsP4qmt-hgtGuJ4OB0tvc-iJEvGkgm3dCKfzQO8Pq3bYPd79yU2DHRSnpyBH3waXGDyuWMKSShluL0jhZSVhVRpo0LL2f0Sz3ycLIWewK63CKWO8WtfYfHoTCih5DkMRsRbAc4Uxl4kT96DXKLBjCHzU63t1LNqAwtDM0T649hgjCK2YEMk8u7TB9YUhF8EiXQAkSZftQbeJZBrX1ASYbSen3FB8aATN8Pi2Jy5_C7qU8lJiQ1Ncfu8eGz_vxf2s"
+                />
+                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
+                  <p className="text-white font-label-md text-label-md truncate">ÁO THUN BÁNH MÌ</p>
+                </div>
+              </button>
+              <button
+                type="button"
+                className="relative group cursor-pointer overflow-hidden aspect-square rounded-sm text-left"
+                onClick={() => navigate("/danh-muc")}
+              >
+                <img
+                  alt="Túi Ha Long Bay"
+                  className="w-full h-full object-cover"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCee62vsNBDzGeyiMfY0FxEJ0Hjs28pHfx0mahhbI1uauMfpzQLH7PrQzhmKp4I5edBsqCeyiZAAjD_KTE7so_MQ5rD0Mw1CxRE7ipreR1mgZrS_ZfTHHvkVWRthYNkFFsrQcge4gr32iIQMQVRJAFJVUmFDAb0Hk8xYjDvMMydh_pzo8cHqggiWyxnvO8I4OZNWDbpI6B22g2LH3TegRQxfBaS1GjItSUJq49Ffx63d3ltjCVS6vMD4JOMgv1rGhXJ7yGd3VEjkTQ"
+                />
+                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
+                  <p className="text-white font-label-md text-label-md truncate">TÚI HA LONG BAY</p>
+                </div>
+              </button>
+            </div>
+          </aside>
+        </div>
       </main>
     </div>
   );

@@ -112,6 +112,24 @@ body {
   background-color: #fbf9f4;
 }
 
+.notification-detail-page .material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.notification-detail-page .grainy-overlay {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuDRsn_hygFD5yPdP5ZFSgcsqe14ELHymz9Ux_duYo6ynz-PKZUgbaR_wgWLM4E4x8cKjY8rbq409U45zkjMyAvWyOCE2bu79XUNweZ-ShlRR1c8EWNP5H2CNN9nDTqLF6iA0wY-RxNININzFIZzO9ADqqg0uuTc7qxUpW0T9oboIEXqAHeeU8OSb_mlHT8CGD6iuRSYlqY0Rwg4-KGqqRU0I16MgPrBPOLZOfC6NhCWZiqnXs-Q8MiyKzgcR8xBYgGcI_HpPCVt-8tD);
+}
+
 .grain-texture {
   position: fixed;
   top: 0;
