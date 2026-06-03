@@ -24,6 +24,7 @@ import RatingPage from "./pages/RatingPage";
 import OrderDetailPage from "./pages/OrderDetailPage";
 import AboutPage from "./pages/AboutPage";
 import CategoryPage from "./pages/CategoryPage";
+import VouchersPage from "./pages/VouchersPage";
 
 export default function App() {
   return (
@@ -43,6 +44,7 @@ export default function App() {
       <Route path="/vi-tien" element={<WalletPage />} />
       <Route path="/toi" element={<ProfilePage />} />
       <Route path="/thong-tin-ca-nhan" element={<ProfileSettingsPage />} />
+      <Route path="/uu-dai" element={<VouchersPage />} />
       <Route path="/loi" element={<ErrorPage />} />
       <Route path="/theo-doi-don-hang" element={<TrackingPage />} />
       <Route path="/tim-kiem" element={<SearchEmptyPage />} />

@@ -68,7 +68,7 @@ export default {
       },
       fontFamily: {
         beVietnamPro: ["Be Vietnam Pro", "sans-serif"],
-        "body-md": ["Be Vietnam Pro"],
+        "body-md": ["Be Vietnam Pro", "sans-serif"],
         "headline-md": ["Be Vietnam Pro"],
         "headline-lg": ["Be Vietnam Pro"],
         "headline-lg-mobile": ["Be Vietnam Pro"],
