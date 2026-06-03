@@ -164,6 +164,10 @@ export default function ProfileSettingsPage() {
               <div
                 className="flex items-center px-gutter py-4 hover:bg-surface-container-low transition-colors cursor-pointer group"
                 style={{ transform: "scale(1)" }}
+                onClick={() => navigate("/doi-mat-khau")}
+                onKeyDown={(e) => e.key === "Enter" && navigate("/doi-mat-khau")}
+                role="button"
+                tabIndex={0}
               >
                 <span className="material-symbols-outlined mr-4 text-primary" data-icon="lock_reset">
                   lock_reset

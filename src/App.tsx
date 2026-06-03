@@ -26,6 +26,7 @@ import AboutPage from "./pages/AboutPage";
 import CategoryPage from "./pages/CategoryPage";
 import VouchersPage from "./pages/VouchersPage";
 import PaymentCardsPage from "./pages/PaymentCardsPage";
+import ChangePasswordPage from "./pages/ChangePasswordPage";
 
 export default function App() {
   return (
@@ -47,6 +48,7 @@ export default function App() {
       <Route path="/thong-tin-ca-nhan" element={<ProfileSettingsPage />} />
       <Route path="/uu-dai" element={<VouchersPage />} />
       <Route path="/the-thanh-toan" element={<PaymentCardsPage />} />
+      <Route path="/doi-mat-khau" element={<ChangePasswordPage />} />
       <Route path="/loi" element={<ErrorPage />} />
       <Route path="/theo-doi-don-hang" element={<TrackingPage />} />
       <Route path="/tim-kiem" element={<SearchEmptyPage />} />
