@@ -1,0 +1,31 @@
+From 9a9464e5e030ecbfd9112f3a871df5ab341663b5 Mon Sep 17 00:00:00 2001
+From: Gemini Agent <gemini@agent.internal>
+Date: Tue, 2 Jun 2026 14:23:10 +0000
+Subject: [PATCH] fix: update tailwind import directives and load legacy config
+ for v4 compatibility
+
+---
+ src/styles.css | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/src/styles.css b/src/styles.css
+index 5f342f0..37507c0 100644
+--- a/src/styles.css
++++ b/src/styles.css
+@@ -1,6 +1,5 @@
+-@tailwind base;
+-@tailwind components;
+-@tailwind utilities;
++@import "tailwindcss";
++@config "../tailwind.config.js";
+ 
+ :root {
+   color-scheme: light;
+@@ -35,4 +34,3 @@ body {
+ .field-lift:focus-within {
+   transform: translateY(-2px);
+ }
+-
+-- 
+2.43.0
+

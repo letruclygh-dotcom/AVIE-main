@@ -1,0 +1,2006 @@
+diff --git a/src/App.tsx b/src/App.tsx
+index bfd983e..17dcf5a 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
+ import LoginPage from "./pages/LoginPage";
+ import RegisterPage from "./pages/RegisterPage";
+ import PaymentPage from "./pages/PaymentPage";
++import PaymentMethodPage from "./pages/PaymentMethodPage";
+ import FilterPage from "./pages/FilterPage";
+ import SuccessPage from "./pages/SuccessPage";
+ import PolicyPage from "./pages/PolicyPage";
+@@ -17,6 +18,9 @@ import NotificationPage from "./pages/NotificationPage";
+ import NotificationDetailPage from "./pages/NotificationDetailPage";
+ import SupportPage from "./pages/SupportPage";
+ import AddressPage from "./pages/AddressPage";
++import OrdersPage from "./pages/OrdersPage";
++import RatingPage from "./pages/RatingPage";
++import OrderDetailPage from "./pages/OrderDetailPage";
+ 
+ export default function App() {
+   return (
+@@ -27,6 +31,7 @@ export default function App() {
+       <Route path="/dang-nhap" element={<LoginPage />} />
+       <Route path="/dang-ky" element={<RegisterPage />} />
+       <Route path="/thanh-toan" element={<PaymentPage />} />
++      <Route path="/chon-phuong-thuc-thanh-toan" element={<PaymentMethodPage />} />
+       <Route path="/bo-loc" element={<FilterPage />} />
+       <Route path="/dat-hang-thanh-cong" element={<SuccessPage />} />
+       <Route path="/chinh-sach" element={<PolicyPage />} />
+@@ -39,6 +44,9 @@ export default function App() {
+       <Route path="/chi-tiet-thong-bao" element={<NotificationDetailPage />} />
+       <Route path="/ho-tro" element={<SupportPage />} />
+       <Route path="/dia-chi-giao-hang" element={<AddressPage />} />
++      <Route path="/don-hang" element={<OrdersPage />} />
++      <Route path="/danh-gia" element={<RatingPage />} />
++      <Route path="/chi-tiet-don-hang" element={<OrderDetailPage />} />
+       <Route path="*" element={<SplashPage />} />
+     </Routes>
+   );
+diff --git a/src/pages/HomePage.tsx b/src/pages/HomePage.tsx
+index 287e8ce..69bd10d 100644
+--- a/src/pages/HomePage.tsx
++++ b/src/pages/HomePage.tsx
+@@ -14,18 +14,18 @@ export default function HomePage() {
+       title: "Áo Thun Unisex - 100% COTTON - “Bánh Mì”",
+       price: 225000,
+       category: "tops",
+-      tag: "MỚI",
++      tag: "Mới",
+       image:
+-        "https://lh3.googleusercontent.com/aida-public/AB6AXuAaR-tnzfTdhsBTXfnwf2cw6YcgDD3wu797TYNUGqgXScbJ8IlFz0ZAHYmPuRgAeapJNohGfTrMcBYQ4Hi0OBmX4RCrT-beOdEFFz_JuC6RBJ06CddwvDaOAae5RTG26Ulc4FJVoPfpSh-Lw6znusNleXHbRuh14mVEUO5RJkDLW8L1-Ur6L1BJSFxTl4Jf9Bz14c5aHv1DeBkioFXKTr5qU0Do8030mz6IIbXMTgShcqnLSyvDKFJeC4HML26X6HHYliNgNfjOFJvU884",
++        "https://i.ibb.co/PG3p6wTs/6.png",
+     },
+     {
+       id: "p2",
+-      title: "Áo Thun Unisex - 100% COTTON - \"Nón Lá\"",
++      title: 'Áo Thun Unisex - 100% COTTON - "Nón Lá"',
+       price: 225000,
+       category: "tops",
+       tag: "",
+       image:
+-        "https://lh3.googleusercontent.com/aida-public/AB6AXuABDgWTxPT71xgQThD-WD8FPYd6hPQGAdPGCl3DfvblfBYVQRwGpuZ-LpKil9rWJXdi4o27Fg4mLTidyXL04ObCJ644-PK4wQXc3wzOHPlqAcK5WPRp7NA7_iQft6EOUAIRhGenzWl_ZdCXQcixXookv9UMhWrwQQI1PJvF16gCVZP-MLC0sriYzfRW4FrxE5Z7xMlR6MNMRLjXBqAaMPuEGjCJ9v1oD2bXSg1HKLEeWBe8-GIxW1H9q_1Fg0cJp9WuUFFALkIEk9P55SU",
++        "https://i.ibb.co/zhP9w9gz/10.png",
+     },
+     {
+       id: "p3",
+@@ -34,7 +34,7 @@ export default function HomePage() {
+       category: "tops",
+       tag: "HOT",
+       image:
+-        "https://lh3.googleusercontent.com/aida-public/AB6AXuBd5KziS4W6bBcwIYKn9RhN2-b9kK5bR6qgZTA1r9EyOQ7NdWxXihj_rG633T3l9v5wOZzzLTfsb5f9jcInJE1wZy5Mzq_xe49qiQ4Fho2sMdPUQgPXkVDV_oecarOBoxD6nYTugPx-tMmQTRTRQUSlAb9SUz-oKktodQJNsbNgSLiiuXpluuitgHGOdogoatU4t81vJr-CsviiMrCX4LIaFW86hMTzEu4AJk2d1ZAV0oRaAFmLZSfv2KgwjI02sE_f3sUmXbFeo8_J",
++        "https://i.ibb.co/hxBR2WM3/3.png",
+     },
+     {
+       id: "p4",
+@@ -43,7 +43,7 @@ export default function HomePage() {
+       category: "tops",
+       tag: "",
+       image:
+-        "https://lh3.googleusercontent.com/aida-public/AB6AXuCrHJ25Bzae-q75MX57AnlEgwnyAQE_E3mn4FJAde3oWfwfbxXVj2Yx__2mN7KZ6otmWRUXnYp5888FFmNfVBDTJ8DrqDUi0rp_qseMU1BrhjJrHTcO3ShPq_sYxCN0_vrmcvE9hO6OXua2G5YO6_vpuIguU-NP6gKywHJY0VSMnuzx5tLU7wGfo1JFT7-jg7ycijZujy4wLEuNTnsv0rTmLB2SaiaprdoQgQqpegAFZTymW84oRYTCCEw0-2iLV4zJfk1sbRDCpMTB",
++        "https://i.ibb.co/FvnTxYt/11.png",
+     },
+   ];
+ 
+@@ -66,7 +66,7 @@ export default function HomePage() {
+     <div className="bg-background text-on-surface min-h-screen pb-28 font-sans relative antialiased select-none">
+       <GrainTexture />
+ 
+-      {/* Top App Bar (Header) */}
++      {/* Top App Bar Header */}
+       <header className="fixed top-0 w-full z-50 bg-background border-b border-surface-variant shrink-0">
+         <div className="flex justify-between items-center px-container-padding h-16 w-full max-w-screen-xl mx-auto">
+           {/* Click to search */}
+@@ -80,13 +80,13 @@ export default function HomePage() {
+ 
+           {/* Centered Logo */}
+           <img
+-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwh7yrVOTAGqdin7eM3AB4NddGwgjJXL0uhlU42-nMJtT8DcJWGpytyfED7UrfmS1t9lZdxw-Cqo3LHuoO7XGT5z_H-k3cyhDp1_OwRFpdibfhlSCsQHVcVJrQPBc_dUfLsaoXk_vqTqGSMbCuucwee8nfTKTlaBfU4WkODCqwFEo3NVR7_-uJSjWKVR4foLaMGo4e_LHNpR52KFpQElMTzFPIiCy93mAFN3P7krJ4-npb2ftHMKuecPr0PvE2gcZHGxHDVLVzxlfhVvw"
++            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwh7yrVOTAGqdin7eM3AB4NddGwgjYXL0uhlU42-nMJtT8DcJWGpytyfED7UrfmS1t9lZdxw-Cqo3LHuonO7XGT5z_H-k3cyhDp1_OwRFpdibfhlSCsQHVcVJrQPBc_dUfLsaoXk_vqTqGSMbCuucwee8nfTKTlaBfU4WkODCqwFEo3NVR7_-uJSjWKVR4foLaMGo4e_LHNpR52KFpQElMTzFPIiCy93mAFN3P7krJ4-npb2ftHMKuecPr0PvE2gcZHGxHDVLVzxlfhVvw"
+             alt="AoVie Logo"
+             className="h-7 w-auto object-contain"
+           />
+ 
+           <button
+-            onClick={() => alert("Giỏ hàng đang chuẩn bị...")}
++            onClick={() => alert("Giỏ hàng đang được chuẩn bị...")}
+             className="hover:opacity-80 transition-opacity active:scale-95 w-10 h-10 flex items-center justify-center"
+             type="button"
+           >
+@@ -101,7 +101,7 @@ export default function HomePage() {
+         <section className="px-container-padding py-6">
+           <div className="relative overflow-hidden rounded-xl border border-outline-variant h-80 shadow-md">
+             <img
+-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYkIYGEqlZt9wpoKCMu1YUUxU25Gx1IRzTwB5oN4fjmkr43vPLNfTlAvwxHZGz3LNMNVE18zF9D73O8mSXUDaOCBNUdfRX8NLsAW_a__qkP2eObn7KbukkWWEp76EvDh9r91hTHWdQtR3OYxmNt9Y5AWgC23dC53mAzTKKNTJaFgPhaVjjGHejmuXfiDBLBcbvVyhYVwYT7kQZj6YKZfc4DL5jQTApv6QRj_W4K4ZSwScjoppNyk-UYYbZ1pkBPLprynqX8_4hw7P6"
++              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYkIYGEquZt9wpoKCMu1YUUxU25Gx1IRzTwB5oN4fmjkr43vPLNfTlAvwxHZGz3LNMNYE18zF9D73O8mSXUDaOCBNUdfRX8NLsAW_a__qkP2eObn7KubukWWEp76EdDh9r91hTHWdQtR3OYxmNt9Y5AWgC23dC53mAzTKkNTJaFgPhaVjjGHejmuXfiDBLBcbvVyhYVwYT7kQZj6YKZfc4DL5jQTApv6QRj_W4K4ZSwScjoppNyk-UYYYbZ1pkBLPrynqX8_4hw7P6"
+               alt="Saigon Tailoring Shop"
+               className="w-full h-full object-cover brightness-[0.75]"
+             />
+@@ -113,8 +113,7 @@ export default function HomePage() {
+                 Bộ Sưu Tập Di Sản Đô Thị
+               </h2>
+               <p className="font-body-md text-primary-fixed-dim mt-1.5 max-w-md text-xs leading-relaxed opacity-90">
+-                Lấy cảm hứng từ góc tiệm may Saigon cổ kính dưới vệt nắng chiếu nghiêng ấm áp, kiến tạo chất liệu
+-                đương đại mộc mạc và sang trọng.
++                Lấy cảm hứng từ góc tiệm may Saigon cổ kính dưới vệt nắng chiếu nghiêng ấm áp, kiến tạo chất liệu đương đại mộc mạc và sang trọng.
+               </p>
+               <button
+                 onClick={() => navigate("/bo-loc")}
+@@ -146,12 +145,11 @@ export default function HomePage() {
+                     alert("Các sản phẩm của danh mục này đang chuẩn bị ra mắt!");
+                   }
+                 }}
+-                className={[
+-                  "whitespace-nowrap px-4 py-2 rounded-full font-label-md text-label-md uppercase font-semibold transition-all duration-200 active:scale-95",
++                className={`whitespace-nowrap px-4 py-2 rounded-full font-label-md text-label-md uppercase font-semibold transition-all duration-200 active:scale-95 ${
+                   isActive
+                     ? "bg-secondary text-white shadow-sm"
+-                    : "border border-outline-variant text-on-surface-variant hover:bg-surface-container",
+-                ].join(" ")}
++                    : "border border-outline-variant text-on-surface-variant hover:bg-surface-container"
++                }`}
+               >
+                 {cat.label}
+               </button>
+@@ -162,7 +160,7 @@ export default function HomePage() {
+         {/* Product Catalog Grid */}
+         <section className="px-container-padding pb-6">
+           <div className="flex justify-between items-end mb-6">
+-            <h3 className="font-headline-md text-headline-md text-primary font-bold">Sản phẩm nổi bật</h3>
++            <h3 className="font-headline-md text-primary font-bold">Sản phẩm nổi bật</h3>
+             <button
+               onClick={() => navigate("/bo-loc")}
+               className="text-label-md font-label-md text-secondary border-b border-secondary font-bold tracking-wider hover:text-secondary/80"
+@@ -176,8 +174,13 @@ export default function HomePage() {
+               <div
+                 key={p.id}
+                 onClick={() => {
+-                  // Direct checkout simulation
+-                  if (window.confirm(`Bạn muốn chọn mua nhanh sản phẩm "${p.title}" với giá ${formatVND(p.price)}?`)) {
++                  if (
++                    window.confirm(
++                      `Bạn muốn chọn mua nhanh sản phẩm "${p.title}" với giá ${formatVND(
++                        p.price
++                      )}?`
++                    )
++                  ) {
+                     navigate("/thanh-toan");
+                   }
+                 }}
+@@ -190,16 +193,16 @@ export default function HomePage() {
+                     src={p.image}
+                   />
+                   {p.tag && (
+-                    <span className="absolute top-2 left-2 bg-secondary text-on-secondary px-2.5 py-1 text-[10px] font-label-md uppercase tracking-wider font-bold rounded-xs">
++                    <span className="absolute top-2 left-2 bg-secondary text-white px-2.5 py-1 text-[10px] font-label-md uppercase tracking-wider font-bold rounded-xs">
+                       {p.tag}
+                     </span>
+                   )}
+                 </div>
+                 <div className="py-3">
+-                  <h4 className="font-body-md text-body-md font-bold text-primary mb-1 line-clamp-1 group-hover:text-secondary transition-colors">
++                  <h4 className="font-body-md font-bold text-primary mb-1 line-clamp-1 group-hover:text-secondary transition-colors">
+                     {p.title}
+                   </h4>
+-                  <p className="font-body-md text-body-md text-secondary font-bold">{formatVND(p.price)}</p>
++                  <p className="font-body-md text-secondary font-bold">{formatVND(p.price)}</p>
+                 </div>
+               </div>
+             ))}
+@@ -229,44 +232,48 @@ export default function HomePage() {
+       </main>
+ 
+       {/* Bottom NavBar */}
+-      <nav className="fixed bottom-0 left-0 w-full flex justify-around items-center py-2 px-gutter bg-surface border-t border-outline-variant z-50 shrink-0 select-none">
++      <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-gutter pb-safe bg-surface border-t border-outline-variant">
+         <button
+           onClick={() => handleBottomNav("/trang-chu")}
+           className="flex flex-col items-center justify-center text-secondary relative active:scale-95 w-16"
+         >
+-          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
++          <span
++            className="material-symbols-outlined"
++            style={{ fontVariationSettings: "'FILL' 1" }}
++          >
+             home
+           </span>
+-          <span className="font-label-md text-[10px] uppercase font-bold">Trang chủ</span>
+-          <div className="absolute -bottom-1 w-1.5 h-1.5 bg-secondary rounded-full" />
++          <span className="font-label-md text-[10px] mt-1 font-bold">Trang chủ</span>
++          <div className="absolute -bottom-1 w-1 h-1 bg-secondary rounded-full"></div>
+         </button>
+         <button
+           onClick={() => handleBottomNav("/bo-loc")}
+-          className="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-95 w-16"
++          className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-95 w-16"
+         >
+           <span className="material-symbols-outlined">grid_view</span>
+-          <span className="font-label-md text-[10px] uppercase font-semibold">Danh mục</span>
++          <span className="font-label-md text-[10px] mt-1 font-semibold">Danh mục</span>
+         </button>
++        {/* Link directly to orders page /don-hang */}
+         <button
+-          onClick={() => handleBottomNav("/dat-hang-thanh-cong")}
+-          className="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-95 w-16"
++          onClick={() => handleBottomNav("/don-hang")}
++          className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-95 w-16"
+         >
+           <span className="material-symbols-outlined">receipt_long</span>
+-          <span className="font-label-md text-[10px] uppercase font-semibold">Đơn hàng</span>
++          <span className="font-label-md text-[10px] mt-1 font-semibold">Đơn hàng</span>
+         </button>
+         <button
+-          onClick={() => handleBottomNav("/loi")}
+-          className="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-95 w-16"
++          onClick={() => handleBottomNav("/thong-bao")}
++          className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-95 w-16"
+         >
+           <span className="material-symbols-outlined">notifications</span>
+-          <span className="font-label-md text-[10px] uppercase font-semibold">Thông báo</span>
++          <span className="font-label-md text-[10px] mt-1 font-semibold">Thông báo</span>
+         </button>
+         <button
+           onClick={() => handleBottomNav("/toi")}
+-          className="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-95 w-16"
++          className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-95 w-16"
+         >
+           <span className="material-symbols-outlined">person</span>
+-          <span className="font-label-md text-[10px] uppercase font-semibold">Tôi</span>
++          <span className="font-label-md text-[10px] mt-1 font-semibold">Tôi</span>
+         </button>
+       </nav>
+     </div>
+diff --git a/src/pages/HubPage.tsx b/src/pages/HubPage.tsx
+index 418021b..3ba5146 100644
+--- a/src/pages/HubPage.tsx
++++ b/src/pages/HubPage.tsx
+@@ -9,15 +9,15 @@ export default function HubPage() {
+       title: "Màn hình Chào (Splash)",
+       desc: "Splash screen giới thiệu của AoVie với các hiệu ứng chuyển động logo mượt mà.",
+       icon: "movie_filter",
+-      badge: "Mới Thêm",
+-      badgeColor: "bg-secondary-fixed text-on-secondary-container font-semibold",
++      badge: "Cơ Bản",
++      badgeColor: "bg-surface-variant text-on-surface-variant",
+     },
+     {
+       path: "/trang-chu",
+       title: "Trang Chủ E-Commerce",
+       desc: "Trang chủ với banner tiệm may Saigon cổ kính, danh mục trượt ngang và lưới sản phẩm.",
+       icon: "home",
+-      badge: "Mới Thêm",
++      badge: "Cập Nhật",
+       badgeColor: "bg-secondary-fixed text-on-secondary-container font-semibold",
+     },
+     {
+@@ -37,75 +37,91 @@ export default function HubPage() {
+       badgeColor: "bg-surface-variant text-on-surface-variant",
+     },
+     {
+-      path: "/toi",
+-      title: "Trang Cá Nhân (Tôi)",
+-      desc: "Màn hình thông tin tài khoản, ví số dư, thẻ loyalty Gold và tùy chọn chính sách.",
+-      icon: "person",
+-      badge: "Mới Thêm",
+-      badgeColor: "bg-secondary-fixed text-on-secondary-container font-semibold",
+-    },
+-    {
+-      path: "/vi-tien",
+-      title: "Lịch sử giao dịch ví",
+-      desc: "Bản sao thẻ ví Terracotta, bộ lọc nạp/thanh toán và danh sách biến động số dư.",
+-      icon: "account_balance_wallet",
+-      badge: "Mới Thêm",
+-      badgeColor: "bg-secondary-fixed text-on-secondary-container font-semibold",
++      path: "/thanh-toan",
++      title: "Thông tin Giao hàng & Thanh toán (Checkout)",
++      desc: "Màn hình nhập thông tin người nhận, địa chỉ giao hàng, phương thức vận chuyển và thanh toán tóm tắt đơn hàng.",
++      icon: "shopping_bag",
++      badge: "Mới Thiết Kế",
++      badgeColor: "bg-secondary-fixed text-on-secondary-container font-bold",
+     },
+     {
+-      path: "/thanh-toan",
+-      title: "Phương thức thanh toán",
++      path: "/chon-phuong-thuc-thanh-toan",
++      title: "Chọn Phương thức thanh toán",
+       desc: "Lựa chọn phương thức thanh toán an toàn tiện lợi như COD, Momo, ZaloPay, Chuyển khoản.",
+       icon: "payments",
+-      badge: "Mới Thêm",
+-      badgeColor: "bg-secondary-fixed text-on-secondary-container font-semibold",
++      badge: "Thiết Kế",
++      badgeColor: "bg-surface-variant text-on-surface-variant",
+     },
+     {
+       path: "/bo-loc",
+       title: "Bộ lọc sản phẩm",
+       desc: "Bộ lọc nâng cao với sắp xếp, khoảng giá, kích thước, màu sắc và danh mục sản phẩm.",
+       icon: "tune",
+-      badge: "Mới Thêm",
+-      badgeColor: "bg-secondary-fixed text-on-secondary-container font-semibold",
+-    },
+-    {
+-      path: "/tim-kiem",
+-      title: "Tìm kiếm không kết quả",
+-      desc: "Thanh tìm kiếm nhập sẵn từ khóa Áo da, thông báo trống và sản phẩm gợi ý.",
+-      icon: "search_off",
+-      badge: "Mới Thêm",
+-      badgeColor: "bg-secondary-fixed text-on-secondary-container font-semibold",
++      badge: "Cơ Bản",
++      badgeColor: "bg-surface-variant text-on-surface-variant",
+     },
+     {
+       path: "/dat-hang-thanh-cong",
+       title: "Đặt hàng thành công",
+       desc: "Màn hình thông báo giao dịch thành công sang trọng kèm mã đơn hàng tỉ mỉ.",
+       icon: "task_alt",
+-      badge: "Mới Thêm",
+-      badgeColor: "bg-secondary-fixed text-on-secondary-container font-semibold",
++      badge: "Thiết Kế",
++      badgeColor: "bg-surface-variant text-on-surface-variant",
++    },
++    {
++      path: "/don-hang",
++      title: "Màn hình Đơn hàng - Chờ xác nhận",
++      desc: "Danh sách đơn hàng của bạn được chia theo các tab trạng thái: Tất cả, Chờ xác nhận, Đang giao, Đã giao, Đã hủy.",
++      icon: "receipt_long",
++      badge: "Mới Thiết Kế",
++      badgeColor: "bg-secondary-fixed text-on-secondary-container font-bold",
++    },
++    {
++      path: "/chi-tiet-don-hang",
++      title: "Chi tiết đơn hàng",
++      desc: "Màn hình chi tiết của một đơn hàng, hiển thị trạng thái giao, người nhận, địa chỉ và nút liên hệ hỗ trợ hoặc đánh giá.",
++      icon: "assignment",
++      badge: "Mới Thiết Kế",
++      badgeColor: "bg-secondary-fixed text-on-secondary-container font-bold",
++    },
++    {
++      path: "/danh-gia",
++      title: "Đánh giá sản phẩm",
++      desc: "Màn hình đánh giá sản phẩm đã mua với chọn số sao, viết bình luận và tải ảnh chụp thực tế.",
++      icon: "rate_review",
++      badge: "Mới Thiết Kế",
++      badgeColor: "bg-secondary-fixed text-on-secondary-container font-bold",
+     },
+     {
+       path: "/theo-doi-don-hang",
+-      title: "Theo dõi đơn hàng",
++      title: "Theo dõi đơn hàng (Vận chuyển)",
+       desc: "Lộ trình giao nhận đơn hàng trực quan, bản đồ Saigon và phím liên hệ gọi Shipper.",
+       icon: "local_shipping",
+-      badge: "Mới Thêm",
+-      badgeColor: "bg-secondary-fixed text-on-secondary-container font-semibold",
++      badge: "Thiết Kế",
++      badgeColor: "bg-surface-variant text-on-surface-variant",
+     },
+     {
+-      path: "/chinh-sach",
+-      title: "Chính sách đổi trả & bảo hành",
+-      desc: "Trình bày quy trình đổi hàng 4 bước chi tiết, chính sách bảo hành 6 tháng và FAQs.",
+-      icon: "shield",
+-      badge: "Mới Thêm",
+-      badgeColor: "bg-secondary-fixed text-on-secondary-container font-semibold",
++      path: "/dia-chi-giao-hang",
++      title: "Danh sách Địa chỉ Giao hàng",
++      desc: "Quản lý địa chỉ giao hàng: thêm, xóa, đặt mặc định với form nhập thông tin đầy đủ.",
++      icon: "location_on",
++      badge: "Thiết Kế",
++      badgeColor: "bg-surface-variant text-on-surface-variant",
+     },
+     {
+-      path: "/loi",
+-      title: "Trạng thái lỗi kết nối",
+-      desc: "Màn hình thông báo mất kết nối mạng tối giản với các nút hành động thử lại trực quan.",
+-      icon: "wifi_off",
+-      badge: "Mới Thêm",
++      path: "/vi-tien",
++      title: "Lịch sử giao dịch ví",
++      desc: "Bản sao thẻ ví Terracotta, bộ lọc nạp/thanh toán và danh sách biến động số dư.",
++      icon: "account_balance_wallet",
++      badge: "Thiết Kế",
++      badgeColor: "bg-surface-variant text-on-surface-variant",
++    },
++    {
++      path: "/toi",
++      title: "Trang Cá Nhân (Tôi)",
++      desc: "Màn hình thông tin tài khoản, ví số dư, thẻ loyalty Gold và tùy chọn chính sách.",
++      icon: "person",
++      badge: "Cập Nhật",
+       badgeColor: "bg-secondary-fixed text-on-secondary-container font-semibold",
+     },
+     {
+@@ -113,32 +129,48 @@ export default function HubPage() {
+       title: "Trung tâm Thông báo",
+       desc: "Danh sách thông báo đơn hàng, khuyến mãi, hệ thống với bộ lọc tab và trạng thái đã đọc/chưa đọc.",
+       icon: "notifications",
+-      badge: "Mới Thêm",
+-      badgeColor: "bg-secondary-fixed text-on-secondary-container font-semibold",
++      badge: "Thiết Kế",
++      badgeColor: "bg-surface-variant text-on-surface-variant",
+     },
+     {
+       path: "/chi-tiet-thong-bao",
+       title: "Chi tiết Thông báo",
+       desc: "Màn hình chi tiết thông báo với timeline giao hàng, coupon khuyến mãi và nút hành động ngữ cảnh.",
+       icon: "notification_important",
+-      badge: "Mới Thêm",
+-      badgeColor: "bg-secondary-fixed text-on-secondary-container font-semibold",
++      badge: "Thiết Kế",
++      badgeColor: "bg-surface-variant text-on-surface-variant",
+     },
+     {
+       path: "/ho-tro",
+       title: "Hỗ trợ Khách hàng",
+-      desc: "Giao diện CSKH 3 tab: FAQ accordion, chat trực tuyến và kênh liên hệ (hotline, email, Zalo).",
++      desc: "Giao diện CSKH 3 tab FAQ accordion, chat trực tuyến và kênh liên hệ (hotline, email, Zalo).",
+       icon: "headset_mic",
+-      badge: "Mới Thêm",
+-      badgeColor: "bg-secondary-fixed text-on-secondary-container font-semibold",
++      badge: "Thiết Kế",
++      badgeColor: "bg-surface-variant text-on-surface-variant",
+     },
+     {
+-      path: "/dia-chi-giao-hang",
+-      title: "Danh sách Địa chỉ Giao hàng",
+-      desc: "Quản lý địa chỉ giao hàng: thêm, xóa, đặt mặc định với form nhập thông tin đầy đủ.",
+-      icon: "location_on",
+-      badge: "Mới Thêm",
+-      badgeColor: "bg-secondary-fixed text-on-secondary-container font-semibold",
++      path: "/chinh-sach",
++      title: "Chính sách đổi trả & bảo hành",
++      desc: "Trình bày quy trình đổi hàng 4 bước chi tiết, chính sách bảo hành 6 tháng và FAQs.",
++      icon: "shield",
++      badge: "Thiết Kế",
++      badgeColor: "bg-surface-variant text-on-surface-variant",
++    },
++    {
++      path: "/tim-kiem",
++      title: "Tìm kiếm không kết quả",
++      desc: "Thanh tìm kiếm nhập sẵn từ khóa áo da, thông báo trống và sản phẩm gợi ý.",
++      icon: "search_off",
++      badge: "Thiết Kế",
++      badgeColor: "bg-surface-variant text-on-surface-variant",
++    },
++    {
++      path: "/loi",
++      title: "Trạng thái lỗi kết nối",
++      desc: "Màn hình thông báo mất kết nối mạng tối giản với các nút hành động thử lại trực quan.",
++      icon: "wifi_off",
++      badge: "Thiết Kế",
++      badgeColor: "bg-surface-variant text-on-surface-variant",
+     },
+   ];
+ 
+@@ -155,7 +187,7 @@ export default function HubPage() {
+           <img
+             alt="AoVie Logo"
+             className="h-16 w-auto object-contain hover:scale-105 transition-transform duration-300"
+-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlittWyMBAuOHRrzcRhUDtGmEtOI1eRDXiGm3VqJGucgN_rANfboezkfy2odcIimAHCAxsXU5_2r1OZ7h3fH9OFwQ-7KP0y_sMq3VZfkqxGZ_3T2sC6hNTFiJ0C-Yx7MEemxUeZreDLwC-rGcBYxbB_GL8axzRlJWLimMnreHr7_wUZheWSMxYuOJ5xEjJ6sTsUTpO6ons6NqCBaZSM_xxVrpN7UqEPGxVF7mPXK3Z75IZiUVd5f7uLkOSK2TMGuBq7_Zx5rN7a2C6Upg"
++            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlittWyMBAuOHRrzcRhUDtGmEtOI1eRDXiGm3VqJgucgN_rANfboezkfy2odcIimAHCAxsXU5_2r1OZ7h3fH9OUFwQ-7KP0y_sMq3VZfkqxGZ_3T2sC6hNTFiJ0C-Yx7MEemxUeZreDLwC-rGcBYxbB_GL8axzRlJWLimMnreHr7_wUZheWSMxYuOJ5xEjJ6sTsUTpO6ons6NqCBaZSM_xxVrpN7UqEPGxVF7mPXK3ZN75IZiUVd5f7uLkOSK2TMGuBq7_Zx5rN7a2C6Upg"
+           />
+           <h1 className="font-display-lg text-primary text-2xl md:text-3xl tracking-widest uppercase mt-2">
+             AoVie Workspace
+@@ -169,7 +201,7 @@ export default function HubPage() {
+       {/* Main Grid */}
+       <main className="flex-grow max-w-screen-xl mx-auto w-full px-container-padding py-12">
+         <div className="mb-10 text-center">
+-          <h2 className="font-headline-md text-headline-md text-primary uppercase tracking-wider mb-2">
++          <h2 className="font-headline-md text-headline-md text-primary uppercase tracking-wide mb-2 font-bold">
+             Danh Mục Màn Hình Hệ Thống
+           </h2>
+           <p className="font-body-md text-body-md text-outline">
+@@ -199,7 +231,7 @@ export default function HubPage() {
+                   </span>
+                 </div>
+ 
+-                <h3 className="font-headline-md text-headline-md text-primary group-hover:text-secondary transition-colors mb-2">
++                <h3 className="font-headline-md text-headline-md text-primary group-hover:text-secondary transition-colors mb-2 font-bold text-base">
+                   {route.title}
+                 </h3>
+                 <p className="font-body-md text-body-md text-on-surface-variant group-hover:text-on-surface leading-relaxed mb-6">
+@@ -207,7 +239,7 @@ export default function HubPage() {
+                 </p>
+               </div>
+ 
+-              <div className="flex items-center gap-1.5 text-secondary font-label-md text-label-md uppercase tracking-wider font-semibold group-hover:translate-x-1.5 transition-transform duration-300">
++              <div className="flex items-center gap-1.5 text-secondary font-label-md text-label-md uppercase tracking-wider font-bold group-hover:translate-x-1.5 transition-transform duration-300">
+                 Truy cập màn hình
+                 <span className="material-symbols-outlined text-[16px] font-bold">arrow_forward</span>
+               </div>
+diff --git a/src/pages/OrderDetailPage.tsx b/src/pages/OrderDetailPage.tsx
+new file mode 100644
+index 0000000..080d782
+--- /dev/null
++++ b/src/pages/OrderDetailPage.tsx
+@@ -0,0 +1,209 @@
++import { useNavigate } from "react-router-dom";
++import GrainTexture from "../components/GrainTexture";
++
++export default function OrderDetailPage() {
++  const navigate = useNavigate();
++
++  return (
++    <div className="bg-background text-on-background min-h-screen pb-20 font-sans relative antialiased select-none">
++      <GrainTexture />
++
++      {/* TopAppBar */}
++      <header className="flex justify-between items-center px-container-padding h-16 w-full sticky top-0 z-50 bg-background border-b border-outline-variant">
++        <div className="flex items-center">
++          <button
++            onClick={() => navigate(-1)}
++            className="text-primary hover:opacity-80 transition-opacity cursor-pointer w-10 h-10 flex items-center justify-center"
++          >
++            <span className="material-symbols-outlined">arrow_back</span>
++          </button>
++        </div>
++        <h1 className="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary tracking-tighter uppercase">
++          AOVIE
++        </h1>
++        <div className="flex items-center">
++          <button
++            onClick={() => alert("Giỏ hàng đang tải...")}
++            className="text-primary hover:opacity-80 transition-opacity cursor-pointer w-10 h-10 flex items-center justify-center"
++          >
++            <span className="material-symbols-outlined text-primary">shopping_cart</span>
++          </button>
++        </div>
++      </header>
++
++      <main className="max-w-3xl mx-auto px-container-padding py-6 space-y-6 relative z-10">
++        {/* Order Identification & Status */}
++        <section className="bg-surface-container-low p-5 border border-outline-variant rounded-lg space-y-3 shadow-xs">
++          <div className="flex justify-between items-center">
++            <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest font-bold">
++              Mã đơn hàng
++            </span>
++            <span className="font-body-lg text-body-lg font-bold text-primary">#AV12345</span>
++          </div>
++          <div className="flex justify-between items-center">
++            <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest font-bold">
++              Trạng thái
++            </span>
++            <div className="flex items-center gap-2 text-secondary">
++              <span className="material-symbols-outlined text-[18px]">local_shipping</span>
++              <span className="font-headline-md text-headline-md text-secondary font-bold text-base">
++                Đang giao
++              </span>
++            </div>
++          </div>
++          <div className="pt-4 border-t border-outline-variant/30">
++            <p className="font-body-md text-body-md text-on-surface-variant italic leading-relaxed">
++              Niềm tự hào di sản đang trên đường tới bạn. Dự kiến giao vào Thứ Năm, 24/10.
++            </p>
++          </div>
++        </section>
++
++        {/* Product List */}
++        <section className="space-y-4">
++          <h2 className="font-label-md text-label-md text-primary uppercase tracking-widest border-b border-outline-variant pb-2 font-bold">
++            Danh sách sản phẩm
++          </h2>
++          <div className="flex gap-4 items-start py-2">
++            <div className="w-24 h-32 flex-shrink-0 bg-surface-container-highest overflow-hidden border border-outline-variant rounded-lg">
++              <img
++                alt="Áo Thun Unisex - 100% COTTON - “Bánh Mì”"
++                className="w-full h-full object-cover"
++                src="https://i.ibb.co/PG3p6wTs/6.png"
++              />
++            </div>
++            <div className="flex-1 flex flex-col justify-between h-32 py-1">
++              <div>
++                <h3 className="font-body-lg text-body-lg font-bold text-primary leading-tight text-sm">
++                  Áo Thun Unisex - 100% COTTON - “Bánh Mì”
++                </h3>
++                <p className="font-body-md text-body-md text-on-surface-variant mt-1">
++                  Size: L | Số lượng: 1
++                </p>
++              </div>
++              <p className="font-body-lg text-body-lg font-bold text-secondary">225.000đ</p>
++            </div>
++          </div>
++          <div className="pt-2 flex justify-end">
++            <button
++              onClick={() => navigate("/danh-gia")}
++              className="px-4 py-2 bg-secondary text-white font-label-md text-xs uppercase tracking-wider rounded font-bold hover:opacity-90 active:scale-95 transition-all"
++            >
++              Viết Đánh Giá
++            </button>
++          </div>
++        </section>
++
++        {/* Shipping & Recipient Information */}
++        <section className="space-y-4">
++          <h2 className="font-label-md text-label-md text-primary uppercase tracking-widest border-b border-outline-variant pb-2 font-bold">
++            Thông tin giao hàng
++          </h2>
++          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-surface p-5 border border-outline-variant rounded-lg shadow-xs">
++            <div className="space-y-1">
++              <p className="font-label-md text-label-md text-on-surface-variant font-bold">
++                NGƯỜI NHẬN
++              </p>
++              <p className="font-body-lg text-body-lg text-on-surface font-bold">
++                Nguyễn Minh Hoàng
++              </p>
++              <p className="font-body-md text-body-md text-on-surface-variant">090 123 4567</p>
++            </div>
++            <div className="space-y-1">
++              <p className="font-label-md text-label-md text-on-surface-variant font-bold">Địa chỉ</p>
++              <p className="font-body-md text-body-md text-on-surface leading-relaxed">
++                123 Đường Tôn Thất Đạm, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh
++              </p>
++            </div>
++          </div>
++        </section>
++
++        {/* Payment Summary */}
++        <section className="bg-surface-container p-5 border border-outline-variant rounded-lg shadow-xs">
++          <div className="space-y-3">
++            <div className="flex justify-between font-body-md text-body-md">
++              <span className="text-on-surface-variant">Tạm tính (1 sản phẩm)</span>
++              <span className="text-on-surface">225.000đ</span>
++            </div>
++            <div className="flex justify-between font-body-md text-body-md">
++              <span className="text-on-surface-variant">Phí vận chuyển</span>
++              <span className="text-on-surface">30.000đ</span>
++            </div>
++            <div className="flex justify-between font-body-md text-body-md">
++              <span className="text-on-surface-variant">Giảm giá</span>
++              <span className="text-on-surface text-secondary font-bold">-0đ</span>
++            </div>
++            <div className="pt-3 border-t border-outline-variant flex justify-between items-center">
++              <span className="font-label-md text-label-md text-primary uppercase font-bold">
++                Tổng thanh toán
++              </span>
++              <span className="font-headline-lg text-headline-lg text-secondary font-bold">
++                255.000đ
++              </span>
++            </div>
++          </div>
++        </section>
++
++        {/* Contact Support Button */}
++        <div className="pt-4">
++          <button
++            onClick={() => navigate("/ho-tro")}
++            className="w-full bg-primary text-on-primary font-label-md text-label-md py-4 rounded-lg uppercase tracking-widest hover:bg-primary-container transition-all flex items-center justify-center gap-2 font-bold active:scale-[0.98] shadow-md shadow-primary/10"
++          >
++            <span className="material-symbols-outlined">support_agent</span>
++            Liên hệ hỗ trợ tận tâm
++          </button>
++        </div>
++      </main>
++
++      {/* BottomNavBar */}
++      <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-gutter pb-safe bg-surface border-t border-outline-variant">
++        {/* Trang chủ */}
++        <button
++          onClick={() => navigate("/trang-chu")}
++          className="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors px-2 w-16"
++        >
++          <span className="material-symbols-outlined">home</span>
++          <span className="font-label-md text-label-md">Trang chủ</span>
++        </button>
++        {/* Danh mục */}
++        <button
++          onClick={() => navigate("/bo-loc")}
++          className="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors px-2 w-16"
++        >
++          <span className="material-symbols-outlined">grid_view</span>
++          <span className="font-label-md text-label-md">Danh mục</span>
++        </button>
++        {/* Đơn hàng (Active) */}
++        <button
++          onClick={() => navigate("/don-hang")}
++          className="flex flex-col items-center justify-center text-secondary font-bold relative px-2 w-16"
++        >
++          <span
++            className="material-symbols-outlined"
++            style={{ fontVariationSettings: "'FILL' 1" }}
++          >
++            receipt_long
++          </span>
++          <span className="font-label-md text-label-md font-bold">Đơn hàng</span>
++          <div className="absolute -bottom-1 w-1 h-1 bg-secondary rounded-full"></div>
++        </button>
++        {/* Thông báo */}
++        <button
++          onClick={() => navigate("/thong-bao")}
++          className="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors px-2 w-16"
++        >
++          <span className="material-symbols-outlined">notifications</span>
++          <span className="font-label-md text-label-md">Thông báo</span>
++        </button>
++        {/* Tôi */}
++        <button
++          onClick={() => navigate("/toi")}
++          className="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors px-2 w-16"
++        >
++          <span className="material-symbols-outlined">person</span>
++          <span className="font-label-md text-label-md">Tôi</span>
++        </button>
++      </nav>
++    </div>
++  );
++}
+diff --git a/src/pages/OrdersPage.tsx b/src/pages/OrdersPage.tsx
+new file mode 100644
+index 0000000..91253f1
+--- /dev/null
++++ b/src/pages/OrdersPage.tsx
+@@ -0,0 +1,263 @@
++import { useState } from "react";
++import { useNavigate } from "react-router-dom";
++import GrainTexture from "../components/GrainTexture";
++
++type OrderTab = "all" | "pending" | "shipping" | "delivered" | "cancelled";
++
++interface OrderItem {
++  id: string;
++  code: string;
++  price: string;
++  imageSrc: string;
++  title: string;
++  details: string;
++  quantity: string;
++  itemCount: string;
++  status: OrderTab;
++}
++
++export default function OrdersPage() {
++  const navigate = useNavigate();
++  const [activeTab, setActiveTab] = useState<OrderTab>("pending");
++
++  const tabs = [
++    { id: "all" as OrderTab, label: "Tất cả" },
++    { id: "pending" as OrderTab, label: "Chờ xác nhận" },
++    { id: "shipping" as OrderTab, label: "Đang giao" },
++    { id: "delivered" as OrderTab, label: "Đã giao" },
++    { id: "cancelled" as OrderTab, label: "Đã hủy" },
++  ];
++
++  const initialOrders: OrderItem[] = [
++    {
++      id: "o1",
++      code: "AV2409101",
++      price: "225.000đ",
++      imageSrc: "https://i.ibb.co/PG3p6wTs/6.png",
++      title: 'Áo Thun Unisex - 100% COTTON - “Bánh Mì”',
++      details: "Phân loại: Kem / Size L",
++      quantity: "x1",
++      itemCount: "1 sản phẩm",
++      status: "pending",
++    },
++    {
++      id: "o2",
++      code: "AV2409102",
++      price: "225.000đ",
++      imageSrc: "https://i.ibb.co/zhP9w9gz/10.png",
++      title: 'Áo Thun Unisex - 100% COTTON - "Nón Lá"',
++      details: "Phân loại: Đen Than / Standard",
++      quantity: "x1",
++      itemCount: "1 sản phẩm",
++      status: "pending",
++    },
++    {
++      id: "o3",
++      code: "AV2409105",
++      price: "225.000đ",
++      imageSrc: "https://i.ibb.co/hxBR2WM3/3.png",
++      title: 'Áo Thun Unisex - 100% Cotton - “Độc Lập”',
++      details: "Phân loại: Đất Sét / Size XL",
++      quantity: "x2",
++      itemCount: "2 sản phẩm",
++      status: "pending",
++    },
++  ];
++
++  const [orders, setOrders] = useState<OrderItem[]>(initialOrders);
++
++  const handleCancelOrder = (id: string, code: string) => {
++    if (window.confirm(`Bạn có chắc chắn muốn hủy đơn hàng #${code}?`)) {
++      setOrders((prev) =>
++        prev.map((order) => (order.id === id ? { ...order, status: "cancelled" } : order))
++      );
++      alert(`Đơn hàng #${code} đã được hủy.`);
++    }
++  };
++
++  const filteredOrders = orders.filter((order) => {
++    if (activeTab === "all") return true;
++    return order.status === activeTab;
++  });
++
++  return (
++    <div className="bg-background text-on-background min-h-screen flex flex-col font-sans relative antialiased select-none pb-20">
++      <GrainTexture />
++
++      {/* TopAppBar */}
++      <header className="fixed top-0 w-full z-50 bg-background border-b border-outline-variant">
++        <div className="flex justify-between items-center px-container-padding h-16 w-full max-w-screen-xl mx-auto">
++          <button
++            onClick={() => alert("Chức năng tìm kiếm đơn hàng...")}
++            className="text-primary hover:opacity-80 transition-opacity active:scale-95 w-10 h-10 flex items-center justify-center"
++          >
++            <span className="material-symbols-outlined">search</span>
++          </button>
++          <h1 className="font-headline-lg-mobile text-headline-lg-mobile tracking-widest text-primary uppercase font-sans font-bold">
++            AoVie
++          </h1>
++          <button
++            onClick={() => navigate("/thanh-toan")}
++            className="text-primary hover:opacity-80 transition-opacity active:scale-95 w-10 h-10 flex items-center justify-center"
++          >
++            <span className="material-symbols-outlined">shopping_bag</span>
++          </button>
++        </div>
++      </header>
++
++      {/* Main Content */}
++      <main className="flex-grow pt-16 pb-20 relative z-10">
++        {/* Sticky Order Tabs */}
++        <div className="sticky top-16 z-40 bg-surface border-b border-outline-variant overflow-x-auto hide-scrollbar">
++          <nav className="flex px-4 space-x-8 min-w-max h-12 items-center">
++            {tabs.map((tab) => {
++              const isActive = activeTab === tab.id;
++              return (
++                <button
++                  key={tab.id}
++                  onClick={() => setActiveTab(tab.id)}
++                  className={`font-label-md text-label-md uppercase tracking-wider whitespace-nowrap font-sans h-full flex items-center transition-all ${
++                    isActive ? "text-secondary border-b-2 border-secondary font-bold" : "text-on-surface-variant hover:text-secondary"
++                  }`}
++                >
++                  {tab.label}
++                </button>
++              );
++            })}
++          </nav>
++        </div>
++
++        {/* Order List */}
++        <div className="p-4 space-y-4 max-w-2xl mx-auto">
++          {filteredOrders.length === 0 ? (
++            <div className="pt-20 flex flex-col items-center opacity-30 select-none">
++              <span className="material-symbols-outlined text-6xl mb-2">shopping_bag</span>
++              <p className="font-label-md text-label-md uppercase font-sans">
++                Không có đơn hàng nào
++              </p>
++            </div>
++          ) : (
++            filteredOrders.map((order) => (
++              <div
++                key={order.id}
++                className="bg-surface p-4 border border-outline-variant rounded-none transition-all hover:bg-surface-container-low active:scale-[0.99] duration-150"
++              >
++                <div className="flex justify-between items-center mb-4 pb-2 border-b border-outline-variant/30">
++                  <span className="font-label-md text-label-md text-on-surface-variant font-sans">
++                    Mã: #{order.code}
++                  </span>
++                  <span className="font-label-md text-label-md text-secondary uppercase tracking-tighter font-sans font-bold">
++                    {order.price}
++                  </span>
++                </div>
++                <div className="flex gap-4">
++                  <div className="w-24 h-32 bg-surface-variant flex-shrink-0 overflow-hidden border border-outline-variant/30">
++                    <img
++                      alt={order.title}
++                      className="w-full h-full object-cover"
++                      src={order.imageSrc}
++                    />
++                  </div>
++                  <div className="flex-grow flex flex-col justify-between">
++                    <div>
++                      <h3 className="font-headline-md text-headline-md text-primary leading-tight font-sans text-sm font-bold">
++                        {order.title}
++                      </h3>
++                      <p className="font-body-md text-body-md text-on-surface-variant mt-1 font-sans">
++                        {order.details}
++                      </p>
++                      <p className="font-body-md text-body-md text-on-surface-variant font-sans">
++                        Số lượng: {order.quantity}
++                      </p>
++                    </div>
++                    <div className="flex justify-between items-end">
++                      <span className="font-label-md text-label-md text-on-surface-variant font-sans">
++                        {order.itemCount}
++                      </span>
++                      <span className="font-headline-md text-headline-md text-secondary font-sans font-bold">
++                        {order.price}
++                      </span>
++                    </div>
++                  </div>
++                </div>
++                {order.status === "pending" && (
++                  <div className="mt-4 pt-4 border-t border-outline-variant/30 flex justify-end gap-3">
++                    <button
++                      onClick={() => navigate("/chi-tiet-don-hang")}
++                      className="px-6 py-2 border border-primary text-primary font-label-md text-label-md uppercase hover:bg-primary hover:text-white transition-all font-sans font-semibold"
++                    >
++                      Chi tiết
++                    </button>
++                    <button
++                      onClick={() => handleCancelOrder(order.id, order.code)}
++                      className="px-6 py-2 bg-primary text-white font-label-md text-label-md uppercase hover:opacity-90 transition-opacity font-sans font-semibold"
++                    >
++                      Hủy đơn
++                    </button>
++                  </div>
++                )}
++              </div>
++            ))
++          )}
++
++          {/* End of list stamp */}
++          {filteredOrders.length > 0 && (
++            <div className="pt-10 flex flex-col items-center opacity-30 select-none">
++              <span className="material-symbols-outlined text-6xl mb-2">shopping_bag</span>
++              <p className="font-label-md text-label-md uppercase font-sans">
++                Hết danh sách đơn hàng
++              </p>
++            </div>
++          )}
++        </div>
++      </main>
++
++      {/* BottomNavBar */}
++      <nav className="fixed bottom-0 w-full z-50 border-t border-outline-variant bg-surface">
++        <div className="flex justify-around items-center h-16 px-2 pb-safe w-full">
++          <button
++            onClick={() => navigate("/trang-chu")}
++            className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-90 w-16"
++          >
++            <span className="material-symbols-outlined">home</span>
++            <span className="font-label-md text-[10px] mt-1 font-sans">Trang chủ</span>
++          </button>
++          <button
++            onClick={() => navigate("/bo-loc")}
++            className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-90 w-16"
++          >
++            <span className="material-symbols-outlined">grid_view</span>
++            <span className="font-label-md text-[10px] mt-1 font-sans">Danh mục</span>
++          </button>
++          <button
++            onClick={() => navigate("/don-hang")}
++            className="flex flex-col items-center justify-center text-secondary relative active:scale-90 w-16"
++          >
++            <span
++              className="material-symbols-outlined"
++              style={{ fontVariationSettings: "'FILL' 1" }}
++            >
++              receipt_long
++            </span>
++            <span className="font-label-md text-[10px] mt-1 font-sans font-bold">Đơn hàng</span>
++            <div className="absolute -bottom-1 w-1 h-1 bg-secondary rounded-full"></div>
++          </button>
++          <button
++            onClick={() => navigate("/thong-bao")}
++            className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-90 w-16"
++          >
++            <span className="material-symbols-outlined">notifications</span>
++            <span className="font-label-md text-[10px] mt-1 font-sans">Thông báo</span>
++          </button>
++          <button
++            onClick={() => navigate("/toi")}
++            className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-90 w-16"
++          >
++            <span className="material-symbols-outlined">person</span>
++            <span className="font-label-md text-[10px] mt-1 font-sans">Tôi</span>
++          </button>
++        </div>
++      </nav>
++    </div>
++  );
++}
+diff --git a/src/pages/PaymentMethodPage.tsx b/src/pages/PaymentMethodPage.tsx
+new file mode 100644
+index 0000000..4b0da9b
+--- /dev/null
++++ b/src/pages/PaymentMethodPage.tsx
+@@ -0,0 +1,160 @@
++import { useState } from "react";
++import { useNavigate } from "react-router-dom";
++import GrainTexture from "../components/GrainTexture";
++
++type PaymentMethod = "cod" | "momo" | "zalopay" | "bank";
++
++export default function PaymentMethodPage() {
++  const navigate = useNavigate();
++  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>("cod");
++  const [isProcessing, setIsProcessing] = useState(false);
++
++  const options = [
++    {
++      id: "cod" as PaymentMethod,
++      title: "Thanh toán khi nhận hàng (COD)",
++      description: "Thanh toán bằng tiền mặt khi shipper giao tới",
++      iconType: "icon",
++      iconName: "payments",
++    },
++    {
++      id: "momo" as PaymentMethod,
++      title: "Ví điện tử Momo",
++      description: "Nhanh chóng, tiện lợi qua ứng dụng Momo",
++      iconType: "image",
++      iconSrc:
++        "https://lh3.googleusercontent.com/aida-public/AB6AXuCG5PSsXh38oNzH00PEFCGSOQSMY7kS9r020yFrXFh_W50VMF4aFWO-Hj2KLQqXFTuO8mCCPbT0MULCE8VNPsd05jrrKlILk3BFNrg7Q98P7q-zVaP7P6bECvG8nYNeK7stbcI8HebaPC82dRrkAsI4nBA4qJSD0W_g-NsDRbzMu-vTbbU_H8fbofL8-mYbutZBtGRESDJpc0feWcsk9P_Q3ksSh9O7hzPuFsRKWmMKzpKDpjszX8RBpsaK20EsyEA7Dh8zIGd01Ubz",
++    },
++    {
++      id: "zalopay" as PaymentMethod,
++      title: "Ví điện tử ZaloPay",
++      description: "Thanh toán an toàn qua ZaloPay",
++      iconType: "image",
++      iconSrc:
++        "https://lh3.googleusercontent.com/aida-public/AB6AXuAZBN02RdyDz9bMy6R-v-I2DZJA8_W1SZ-dCNF0ixGxF2adx54Rh14WzfttfEgzdHhyRA5eyKgeMnwIDhBADHBdNGS_DPxX40eR-CaHlAZPtsVkuj39vpoMiC9NFiSgrj3l608FP7HtOKAR__K7nawY0--mLybB5XOnLb9TNKI6mc8oiIv9a3ekEOcMRi7Q9mGWd5iyXKvrv9AdncM3tTq9faoSfd8C0SJhkJYlretI5OSpnrUXUGZ345nVV3GjkQLUCS-VlrtqXB-l",
++    },
++    {
++      id: "bank" as PaymentMethod,
++      title: "Chuyển khoản ngân hàng",
++      description: "Chuyển khoản trực tiếp qua ngân hàng nội địa",
++      iconType: "icon",
++      iconName: "account_balance",
++    },
++  ];
++
++  const handleConfirm = () => {
++    setIsProcessing(true);
++    setTimeout(() => {
++      alert("Đã chọn phương thức: " + selectedMethod.toUpperCase());
++      setIsProcessing(false);
++      navigate("/dat-hang-thanh-cong");
++    }, 1000);
++  };
++
++  return (
++    <div className="bg-background text-on-background min-h-screen flex flex-col font-sans relative antialiased select-none">
++      <GrainTexture />
++
++      {/* Top Navigation */}
++      <header className="fixed top-0 w-full z-50 bg-background border-b border-outline-variant">
++        <div className="flex justify-between items-center px-container-padding h-16 w-full max-w-screen-xl mx-auto">
++          <button
++            type="button"
++            className="hover:opacity-80 transition-opacity active:scale-95 transition-transform"
++            onClick={() => navigate(-1)}
++          >
++            <span className="material-symbols-outlined text-primary">arrow_back</span>
++          </button>
++          <h1 className="font-headline-lg-mobile text-primary uppercase text-[18px] tracking-wide">
++            Phương thức thanh toán
++          </h1>
++          <div className="w-10"></div> {/* Visual Balance Spacer */}
++        </div>
++      </header>
++
++      {/* Main Content Canvas */}
++      <main className="flex-grow pt-20 pb-24 px-container-padding max-w-screen-md mx-auto w-full relative z-10">
++        {/* Summary Section */}
++        <div className="mb-section-gap">
++          <h2 className="font-headline-md text-headline-md text-primary mb-4">Lựa chọn thanh toán</h2>
++          <p className="font-body-md text-body-md text-on-surface-variant">
++            Chọn phương thức thanh toán an toàn và tiện lợi nhất cho bạn. AoVie cam kết bảo mật thông tin giao dịch tuyệt đối.
++          </p>
++        </div>
++
++        {/* Payment Options Group */}
++        <div className="space-y-4">
++          {options.map((option) => {
++            const isActive = selectedMethod === option.id;
++            return (
++              <button
++                key={option.id}
++                onClick={() => setSelectedMethod(option.id)}
++                disabled={isProcessing}
++                className={`w-full text-left relative flex items-center p-4 border rounded-lg cursor-pointer transition-all duration-200 group active:scale-[0.99] ${
++                  isActive
++                    ? "border-secondary bg-[#fef4ee]"
++                    : "border-outline-variant bg-surface hover:border-secondary"
++                }`}
++              >
++                <div className="flex items-center w-full">
++                  <div
++                    className={`w-10 h-10 flex items-center justify-center bg-surface-container rounded-lg mr-4 transition-colors overflow-hidden shrink-0 ${
++                      isActive ? "bg-secondary-fixed text-secondary" : "group-hover:bg-secondary-fixed"
++                    }`}
++                  >
++                    {option.iconType === "icon" ? (
++                      <span className="material-symbols-outlined text-secondary">{option.iconName}</span>
++                    ) : (
++                      <img
++                        alt={option.title}
++                        className="w-8 h-8 rounded-md object-contain"
++                        src={option.iconSrc}
++                      />
++                    )}
++                  </div>
++                  <div className="flex-grow pr-4">
++                    <p className="font-body-lg text-body-lg font-semibold text-on-surface leading-tight">
++                      {option.title}
++                    </p>
++                    <p className="font-label-md text-label-md text-on-surface-variant mt-1 leading-normal">
++                      {option.description}
++                    </p>
++                  </div>
++                  <div
++                    className={`radio-dot w-5 h-5 rounded-full border-2 transition-all flex items-center justify-center shrink-0 ${
++                      isActive ? "border-secondary bg-secondary shadow-[inset_0_0_0_3px_#ffffff]" : "border-outline-variant"
++                    }`}
++                  />
++                </div>
++              </button>
++            );
++          })}
++        </div>
++
++        {/* Informational Banner */}
++        <div className="mt-8 p-4 bg-surface-container rounded-lg flex items-start space-x-3 border border-outline-variant/30">
++          <span className="material-symbols-outlined text-secondary text-[20px] shrink-0 mt-0.5">shield</span>
++          <p className="font-label-md text-label-md text-on-surface-variant leading-relaxed">
++            Mọi thông tin thanh toán của bạn được mã hóa 256-bit theo tiêu chuẩn quốc tế. AoVie không lưu trữ thông tin thẻ của khách hàng.
++          </p>
++        </div>
++      </main>
++
++      {/* Bottom Action Bar */}
++      <div className="fixed bottom-0 w-full bg-background border-t border-outline-variant p-4 z-50">
++        <div className="max-w-screen-md mx-auto">
++          <button
++            onClick={handleConfirm}
++            disabled={isProcessing}
++            className={`w-full bg-primary text-on-primary py-4 rounded font-label-md text-label-md uppercase tracking-widest transition-all hover:opacity-90 shadow-md font-bold ${
++              isProcessing ? "opacity-70 cursor-not-allowed" : "active:scale-[0.98]"
++            }`}
++          >
++            {isProcessing ? "ĐANG XỬ LÝ..." : "Xác nhận"}
++          </button>
++        </div>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/pages/PaymentPage.tsx b/src/pages/PaymentPage.tsx
+index 436399d..6f3ff8c 100644
+--- a/src/pages/PaymentPage.tsx
++++ b/src/pages/PaymentPage.tsx
+@@ -2,168 +2,337 @@ import { useState } from "react";
+ import { useNavigate } from "react-router-dom";
+ import GrainTexture from "../components/GrainTexture";
+ 
+-type PaymentMethod = "cod" | "momo" | "zalopay" | "bank";
++type ShippingMethod = "standard";
++type PaymentMethod = "cod" | "bank" | "wallet";
+ 
+ export default function PaymentPage() {
+   const navigate = useNavigate();
+-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>("cod");
++  const [recipientName, setRecipientName] = useState("Nguyễn Văn A");
++  const [recipientPhone, setRecipientPhone] = useState("090 1234 567");
++  const [shippingAddress, setShippingAddress] = useState(
++    "Số nhà, tên đường, phường/xã, quận/huyện..."
++  );
++  const [shippingMethod, setShippingMethod] = useState<ShippingMethod>("standard");
++  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
+   const [isProcessing, setIsProcessing] = useState(false);
+ 
+-  const options = [
+-    {
+-      id: "cod" as PaymentMethod,
+-      title: "Thanh toán khi nhận hàng (COD)",
+-      description: "Thanh toán bằng tiền mặt khi shipper giao tới",
+-      iconType: "icon",
+-      iconName: "payments",
+-    },
+-    {
+-      id: "momo" as PaymentMethod,
+-      title: "Ví điện tử Momo",
+-      description: "Nhanh chóng, tiện lợi qua ứng dụng Momo",
+-      iconType: "image",
+-      iconSrc:
+-        "https://lh3.googleusercontent.com/aida-public/AB6AXuCG5PSsXh38oNzH00PEFCGSOQSMY7kS9r020yFrXFh_W50VMF4aFWO-Hj2KLQqXFTuO8mCCPbT0MULCE8VNPsd05jrrKlILk3BFNrg7Q98P7q-zVaP7P6bECvG8nYNeK7stbcI8HebaPC82dRrkAsI4nBA4qJSD0W_g-NsDRbzMu-vTbbU_H8fbofL8-mYbutZBtGRESDJpc0feWcsk9P_Q3ksSh9O7hzPuFsRKWmMKzpKDpjszX8RBpsaK20EsyEA7Dh8zIGd01Ubz",
+-    },
+-    {
+-      id: "zalopay" as PaymentMethod,
+-      title: "Ví điện tử ZaloPay",
+-      description: "Thanh toán an toàn qua ZaloPay",
+-      iconType: "image",
+-      iconSrc:
+-        "https://lh3.googleusercontent.com/aida-public/AB6AXuAZBN02RdyDz9bMy6R-v-I2DZJA8_W1SZ-dCNF0ixGxF2adx54Rh14WzfttfEgzdHhyRA5eyKgeMnwIDhBADHBdNGS_DPxX40eR-CaHlAZPtsVkuj39vpoMiC9NFiSgrj3l608FP7HtOKAR__K7nawY0--mLybB5XOnLb9TNKI6mc8oiIv9a3ekEOcMRi7Q9mGWd5iyXKvrv9AdncM3tTq9faoSfd8C0SJhkJYlretI5OSpnrUXUGZ345nVV3GjkQLUCS-VlrtqXB-l",
+-    },
+-    {
+-      id: "bank" as PaymentMethod,
+-      title: "Chuyển khoản ngân hàng",
+-      description: "Chuyển khoản trực tiếp qua ngân hàng nội địa",
+-      iconType: "icon",
+-      iconName: "account_balance",
+-    },
+-  ];
++  // Focus styles helper
++  const [activeInput, setActiveInput] = useState<string | null>(null);
+ 
+-  const handleConfirm = () => {
++  const handleSubmit = (e: React.FormEvent) => {
++    e.preventDefault();
+     setIsProcessing(true);
++
+     setTimeout(() => {
+-      alert("Đã chọn phương thức: " + selectedMethod.toUpperCase());
++      alert(
++        "Cảm ơn bạn đã đặt hàng! AoVie sẽ liên hệ sớm nhất để xác nhận đơn hàng."
++      );
+       setIsProcessing(false);
+       navigate("/dat-hang-thanh-cong");
+-    }, 1000);
++    }, 1500);
+   };
+ 
+   return (
+-    <div className="bg-background text-on-background min-h-screen flex flex-col font-sans relative antialiased select-none">
++    <div className="bg-background text-on-surface selection:bg-secondary-container selection:text-on-secondary-container min-h-screen pb-32 font-sans relative antialiased select-none">
+       <GrainTexture />
+ 
+-      {/* Top Navigation Header */}
+-      <header className="fixed top-0 w-full z-50 bg-background/95 backdrop-blur border-b border-outline-variant">
++      {/* TopAppBar */}
++      <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant">
+         <div className="flex justify-between items-center px-container-padding h-16 w-full max-w-screen-xl mx-auto">
+           <button
+-            className="hover:opacity-80 transition-opacity active:scale-95 flex items-center justify-center w-10 h-10"
+-            onClick={() => navigate(-1)}
+             type="button"
++            onClick={() => navigate(-1)}
++            className="hover:opacity-80 transition-opacity active:scale-95 w-10 h-10 flex items-center justify-center"
+           >
+             <span className="material-symbols-outlined text-primary">arrow_back</span>
+           </button>
+-          <h1 className="font-headline-lg-mobile text-primary uppercase text-headline-md tracking-wide whitespace-nowrap">
+-            Phương thức thanh toán
++          <h1 className="font-headline-lg-mobile text-headline-lg-mobile tracking-[0.2em] text-primary uppercase">
++            AoVie
+           </h1>
+-          <div className="w-10"></div> {/* Visual Balance Spacer */}
++          <button
++            type="button"
++            onClick={() => alert("Giỏ hàng đang được tải...")}
++            className="hover:opacity-80 transition-opacity active:scale-95 w-10 h-10 flex items-center justify-center"
++          >
++            <span className="material-symbols-outlined text-primary">shopping_bag</span>
++          </button>
+         </div>
+       </header>
+ 
+       {/* Main Content Canvas */}
+-      <main className="flex-grow pt-24 pb-32 px-container-padding max-w-screen-md mx-auto w-full">
+-        {/* Summary Section */}
+-        <div className="mb-8">
+-          <h2 className="font-headline-md text-headline-md text-primary mb-3">Lựa chọn thanh toán</h2>
+-          <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+-            Chọn phương thức thanh toán an toàn và tiện lợi nhất cho bạn. AoVie cam kết bảo mật thông tin giao dịch tuyệt đối.
+-          </p>
++      <main className="pt-20 pb-12 px-container-padding max-w-md mx-auto font-sans relative z-10">
++        {/* Step Indicator */}
++        <div className="flex items-center justify-between mb-8">
++          <span className="font-label-md text-label-md uppercase tracking-widest text-on-surface-variant/60">
++            Giỏ hàng
++          </span>
++          <span className="h-px bg-outline-variant flex-grow mx-4"></span>
++          <span className="font-label-md text-label-md uppercase tracking-widest text-primary font-bold border-b-2 border-primary pb-1">
++            Thanh toán
++          </span>
++          <span className="h-px bg-outline-variant flex-grow mx-4"></span>
++          <span className="font-label-md text-label-md uppercase tracking-widest text-on-surface-variant/60">
++            Hoàn tất
++          </span>
+         </div>
+ 
+-        {/* Payment Options Group */}
+-        <div className="space-y-4">
+-          {options.map((option) => {
+-            const isActive = selectedMethod === option.id;
+-            return (
+-              <button
+-                key={option.id}
+-                onClick={() => setSelectedMethod(option.id)}
+-                disabled={isProcessing}
+-                className={[
+-                  "w-full text-left relative flex items-center p-4 border rounded-lg transition-all duration-200 group active:scale-[0.99]",
+-                  isActive
+-                    ? "border-secondary bg-[#fef4ee]"
+-                    : "border-outline-variant bg-surface hover:border-secondary",
+-                ].join(" ")}
+-              >
+-                <div className="flex items-center w-full">
+-                  {/* Option Logo or Icon */}
+-                  <div
+-                    className={[
+-                      "w-10 h-10 flex items-center justify-center bg-surface-container rounded-lg mr-4 transition-colors overflow-hidden shrink-0",
+-                      isActive ? "bg-secondary-fixed text-secondary" : "group-hover:bg-secondary-fixed",
+-                    ].join(" ")}
+-                  >
+-                    {option.iconType === "icon" ? (
+-                      <span className="material-symbols-outlined text-primary text-2xl">{option.iconName}</span>
+-                    ) : (
+-                      <img alt={option.title} className="w-8 h-8 rounded-md object-contain" src={option.iconSrc} />
+-                    )}
+-                  </div>
++        <form onSubmit={handleSubmit} className="space-y-section-gap">
++          {/* Section 1: Thông tin người nhận */}
++          <section>
++            <h2 className="font-headline-md text-headline-md mb-6 flex items-center gap-3 text-primary">
++              <span className="material-symbols-outlined">account_circle</span>
++              Thông tin người nhận
++            </h2>
++            <div className="space-y-6">
++              <div className="relative">
++                <label
++                  className={`font-label-md text-label-md mb-2 block uppercase tracking-wider transition-colors ${
++                    activeInput === "name" ? "text-secondary font-bold" : "text-on-surface-variant"
++                  }`}
++                >
++                  Họ tên
++                </label>
++                <input
++                  type="text"
++                  value={recipientName}
++                  onChange={(e) => setRecipientName(e.target.value)}
++                  onFocus={() => setActiveInput("name")}
++                  onBlur={() => setActiveInput(null)}
++                  className="w-full bg-transparent border-0 border-b border-outline-variant focus:border-secondary focus:ring-0 px-0 py-2 font-body-md text-body-md transition-all placeholder:text-on-surface-variant/40 font-sans"
++                  placeholder="Nguyễn Văn A"
++                  required
++                />
++              </div>
++              <div className="relative">
++                <label
++                  className={`font-label-md text-label-md mb-2 block uppercase tracking-wider transition-colors ${
++                    activeInput === "phone" ? "text-secondary font-bold" : "text-on-surface-variant"
++                  }`}
++                >
++                  Số điện thoại
++                </label>
++                <input
++                  type="tel"
++                  value={recipientPhone}
++                  onChange={(e) => setRecipientPhone(e.target.value)}
++                  onFocus={() => setActiveInput("phone")}
++                  onBlur={() => setActiveInput(null)}
++                  className="w-full bg-transparent border-0 border-b border-outline-variant focus:border-secondary focus:ring-0 px-0 py-2 font-body-md text-body-md transition-all placeholder:text-on-surface-variant/40 font-sans"
++                  placeholder="090 1234 567"
++                  required
++                />
++              </div>
++            </div>
++          </section>
+ 
+-                  {/* Option Info */}
+-                  <div className="flex-grow pr-4">
+-                    <p className="font-body-lg text-body-lg font-semibold text-on-surface leading-tight">
+-                      {option.title}
+-                    </p>
+-                    <p className="font-label-md text-label-md text-on-surface-variant mt-1 leading-normal">
+-                      {option.description}
+-                    </p>
+-                  </div>
++          {/* Section 2: Địa chỉ giao hàng */}
++          <section>
++            <h2 className="font-headline-md text-headline-md mb-6 flex items-center gap-3 text-primary">
++              <span className="material-symbols-outlined">distance</span>
++              Địa chỉ giao hàng
++            </h2>
++            <div className="relative">
++              <label
++                className={`font-label-md text-label-md mb-2 block uppercase tracking-wider transition-colors ${
++                  activeInput === "address" ? "text-secondary font-bold" : "text-on-surface-variant"
++                }`}
++              >
++                Địa chỉ chi tiết
++              </label>
++              <textarea
++                value={shippingAddress}
++                onChange={(e) => setShippingAddress(e.target.value)}
++                onFocus={() => setActiveInput("address")}
++                onBlur={() => setActiveInput(null)}
++                className="w-full bg-transparent border-0 border-b border-outline-variant focus:border-secondary focus:ring-0 px-0 py-2 font-body-md text-body-md transition-all resize-none placeholder:text-on-surface-variant/40 font-sans"
++                placeholder="Số nhà, tên đường, phường/xã, quận/huyện..."
++                rows={2}
++                required
++              />
++            </div>
++          </section>
+ 
+-                  {/* Custom Radio Button Dot */}
+-                  <div
+-                    className={[
+-                      "w-5 h-5 rounded-full border-2 transition-all shrink-0 flex items-center justify-center",
+-                      isActive
+-                        ? "border-secondary bg-secondary shadow-[inset_0_0_0_3px_#ffffff]"
+-                        : "border-outline-variant",
+-                    ].join(" ")}
+-                  />
++          {/* Section 3: Phương thức vận chuyển */}
++          <section>
++            <h2 className="font-headline-md text-headline-md mb-6 flex items-center gap-3 text-primary">
++              <span className="material-symbols-outlined">package_2</span>
++              Phương thức vận chuyển
++            </h2>
++            <label className="flex items-center justify-between p-5 bg-surface-container-low border border-outline-variant rounded-xl cursor-pointer hover:border-secondary/50 transition-all group">
++              <div className="flex items-center gap-4">
++                <input
++                  type="radio"
++                  name="shipping"
++                  checked={shippingMethod === "standard"}
++                  onChange={() => setShippingMethod("standard")}
++                  className="w-5 h-5 text-secondary bg-surface border-outline-variant focus:ring-secondary focus:ring-offset-background"
++                />
++                <div>
++                  <p className="font-body-md text-body-md font-bold text-on-surface font-sans">
++                    Giao hàng tiêu chuẩn
++                  </p>
++                  <p className="font-label-md text-label-md text-on-surface-variant italic font-sans">
++                    Dự kiến nhận hàng sau 3-5 ngày
++                  </p>
+                 </div>
+-              </button>
+-            );
+-          })}
+-        </div>
++              </div>
++              <span className="font-body-md text-body-md text-secondary font-bold font-sans">
++                30.000đ
++              </span>
++            </label>
++          </section>
+ 
+-        {/* Informational Secure Banner */}
+-        <div className="mt-8 p-4 bg-surface-container rounded-lg flex items-start space-x-3 border border-outline-variant/30">
+-          <span className="material-symbols-outlined text-secondary text-[20px] shrink-0 mt-0.5">shield</span>
+-          <p className="font-label-md text-label-md text-on-surface-variant leading-relaxed">
+-            Mọi thông tin thanh toán của bạn được mã hóa 256-bit theo tiêu chuẩn quốc tế. AoVie không lưu trữ thông tin thẻ của khách hàng.
+-          </p>
+-        </div>
++          {/* Section 4: Phương thức thanh toán */}
++          <section>
++            <h2 className="font-headline-md text-headline-md mb-6 flex items-center gap-3 text-primary">
++              <span className="material-symbols-outlined">account_balance_wallet</span>
++              Phương thức thanh toán
++            </h2>
++            <div className="space-y-3">
++              <label className="flex items-center gap-4 p-5 bg-surface-container-low border border-outline-variant rounded-xl hover:bg-surface-container transition-colors cursor-pointer group">
++                <input
++                  type="radio"
++                  name="payment"
++                  value="cod"
++                  checked={paymentMethod === "cod"}
++                  onChange={() => setPaymentMethod("cod")}
++                  className="w-5 h-5 text-secondary bg-surface border-outline-variant focus:ring-secondary focus:ring-offset-background"
++                />
++                <span className="font-body-md text-body-md uppercase tracking-wide text-on-surface font-sans">
++                  Thanh toán khi nhận hàng (COD)
++                </span>
++              </label>
++              <label className="flex items-center gap-4 p-5 bg-surface-container-low border border-outline-variant rounded-xl hover:bg-surface-container transition-colors cursor-pointer group">
++                <input
++                  type="radio"
++                  name="payment"
++                  value="bank"
++                  checked={paymentMethod === "bank"}
++                  onChange={() => setPaymentMethod("bank")}
++                  className="w-5 h-5 text-secondary bg-surface border-outline-variant focus:ring-secondary focus:ring-offset-background"
++                />
++                <span className="font-body-md text-body-md uppercase tracking-wide text-on-surface font-sans">
++                  Chuyển khoản ngân hàng
++                </span>
++              </label>
++              <label className="flex items-center gap-4 p-5 bg-surface-container-low border border-outline-variant rounded-xl hover:bg-surface-container transition-colors cursor-pointer group">
++                <input
++                  type="radio"
++                  name="payment"
++                  value="wallet"
++                  checked={paymentMethod === "wallet"}
++                  onChange={() => setPaymentMethod("wallet")}
++                  className="w-5 h-5 text-secondary bg-surface border-outline-variant focus:ring-secondary focus:ring-offset-background"
++                />
++                <span className="font-body-md text-body-md uppercase tracking-wide text-on-surface font-sans">
++                  Ví điện tử (Momo/ZaloPay)
++                </span>
++              </label>
++            </div>
++          </section>
++
++          {/* Section 5: Tóm tắt đơn hàng */}
++          <section className="bg-surface-container p-6 rounded-2xl border border-outline-variant font-sans">
++            <h2 className="font-label-md text-label-md mb-6 uppercase tracking-[0.15em] text-on-surface-variant font-bold border-b border-outline-variant pb-3">
++              Tóm tắt đơn hàng
++            </h2>
++            <div className="space-y-3">
++              <div className="flex justify-between items-center">
++                <span className="font-body-md text-body-md text-on-surface-variant font-sans">
++                  Tạm tính
++                </span>
++                <span className="font-body-md text-body-md font-medium font-sans">
++                  225.000đ
++                </span>
++              </div>
++              <div className="flex justify-between items-center">
++                <span className="font-body-md text-body-md text-on-surface-variant font-sans">
++                  Phí vận chuyển
++                </span>
++                <span className="font-body-md text-body-md font-medium font-sans">
++                  30.000đ
++                </span>
++              </div>
++              <div className="flex justify-between items-center pt-4 mt-2 border-t border-outline-variant">
++                <span className="font-headline-md text-headline-md text-primary font-sans">
++                  Tổng cộng
++                </span>
++                <span className="font-headline-md text-headline-md text-secondary font-sans">
++                  255.000đ
++                </span>
++              </div>
++            </div>
++          </section>
++
++          {/* Section 6: CTA Button */}
++          <div className="pt-4">
++            <button
++              type="submit"
++              disabled={isProcessing}
++              className={`w-full bg-primary text-on-primary py-4 rounded-xl font-label-md text-label-md uppercase tracking-[0.2em] font-bold active:scale-[0.98] transition-all shadow-xl shadow-primary/20 font-sans ${
++                isProcessing ? "opacity-70 cursor-not-allowed" : "hover:bg-on-primary-fixed-variant"
++              }`}
++            >
++              {isProcessing ? "ĐANG XỬ LÝ..." : "Xác nhận đặt hàng"}
++            </button>
++            <p className="text-center font-label-md text-label-md text-on-surface-variant mt-6 px-4 leading-relaxed italic opacity-80 font-sans">
++              Nhấn "Xác nhận đặt hàng" đồng nghĩa với việc bạn đồng ý với Điều khoản mua hàng của AoVie.
++            </p>
++          </div>
++        </form>
+       </main>
+ 
+-      {/* Bottom Action Bar */}
+-      <div className="fixed bottom-0 w-full bg-background border-t border-outline-variant p-4 z-50">
+-        <div className="max-w-screen-md mx-auto">
++      {/* BottomNavBar */}
++      <nav className="fixed bottom-0 w-full z-50 border-t border-outline-variant bg-surface/90 backdrop-blur-md font-sans">
++        <div className="flex justify-around items-center h-16 px-2 pb-safe w-full max-w-screen-xl mx-auto">
++          {/* Trang chủ */}
++          <button
++            onClick={() => navigate("/trang-chu")}
++            className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-90 w-16"
++          >
++            <span className="material-symbols-outlined">home</span>
++            <span className="font-label-md text-[10px] mt-1 font-sans">Trang chủ</span>
++          </button>
++          {/* Danh mục */}
++          <button
++            onClick={() => navigate("/bo-loc")}
++            className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-90 w-16"
++          >
++            <span className="material-symbols-outlined">grid_view</span>
++            <span className="font-label-md text-[10px] mt-1 font-sans">Danh mục</span>
++          </button>
++          {/* Đơn hàng (ACTIVE) */}
++          <button
++            onClick={() => navigate("/don-hang")}
++            className="flex flex-col items-center justify-center text-secondary relative active:scale-90 w-16"
++          >
++            <span
++              className="material-symbols-outlined"
++              style={{ fontVariationSettings: "'FILL' 1" }}
++            >
++              receipt_long
++            </span>
++            <span className="font-label-md text-[10px] mt-1 font-sans">Đơn hàng</span>
++            <div className="absolute -bottom-1 w-1 h-1 bg-secondary rounded-full"></div>
++          </button>
++          {/* Thông báo */}
++          <button
++            onClick={() => navigate("/thong-bao")}
++            className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-90 w-16"
++          >
++            <span className="material-symbols-outlined">notifications</span>
++            <span className="font-label-md text-[10px] mt-1 font-sans">Thông báo</span>
++          </button>
++          {/* Tôi */}
+           <button
+-            onClick={handleConfirm}
+-            disabled={isProcessing}
+-            className={[
+-              "w-full bg-primary text-on-primary py-4 rounded font-label-md text-label-md uppercase tracking-widest transition-all shadow-md select-none font-bold",
+-              isProcessing
+-                ? "opacity-80 cursor-not-allowed"
+-                : "active:scale-[0.98] hover:bg-primary/95 hover:shadow-lg",
+-            ].join(" ")}
++            onClick={() => navigate("/toi")}
++            className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-90 w-16"
+           >
+-            {isProcessing ? "ĐANG XỬ LÝ..." : "Xác nhận"}
++            <span className="material-symbols-outlined">person</span>
++            <span className="font-label-md text-[10px] mt-1 font-sans">Tôi</span>
+           </button>
+         </div>
+-      </div>
++      </nav>
+     </div>
+   );
+ }
+diff --git a/src/pages/ProfilePage.tsx b/src/pages/ProfilePage.tsx
+index 40ac0fa..7402c6e 100644
+--- a/src/pages/ProfilePage.tsx
++++ b/src/pages/ProfilePage.tsx
+@@ -23,12 +23,12 @@ export default function ProfilePage() {
+         <div className="flex justify-between items-center px-container-padding h-16 w-full max-w-screen-xl mx-auto">
+           <button
+             className="hover:opacity-80 transition-opacity active:scale-95 flex items-center justify-center w-10 h-10"
+-            onClick={() => navigate(-1)}
+             type="button"
++            onClick={() => navigate(-1)}
+           >
+             <span className="material-symbols-outlined text-primary">arrow_back</span>
+           </button>
+-          <h1 className="font-headline-lg-mobile text-primary uppercase text-headline-md tracking-wider whitespace-nowrap">
++          <h1 className="font-headline-lg-mobile text-primary uppercase text-headline-md tracking-wide whitespace-nowrap">
+             Cá nhân
+           </h1>
+           <button
+@@ -42,7 +42,7 @@ export default function ProfilePage() {
+       </header>
+ 
+       {/* Main Content Area */}
+-      <main className="flex-grow pt-20 pb-28 px-container-padding max-w-md mx-auto w-full flex flex-col gap-6">
++      <main className="flex-grow pt-20 pb-28 px-container-padding max-w-md mx-auto w-full flex flex-col gap-6 relative z-10">
+         {/* User Profile Header Card */}
+         <section className="bg-surface border border-outline-variant p-5 rounded-lg flex items-center gap-4 mt-2 shadow-xs">
+           {/* Avatar frame */}
+@@ -59,11 +59,11 @@ export default function ProfilePage() {
+               </span>
+             </div>
+             <p className="font-label-md text-label-md text-on-surface-variant mt-1">090 123 4567</p>
+-            <p className="font-label-md text-label-md text-outline text-[11px]">username@email.com</p>
++            <p className="font-label-md text-label-md text-on-surface-variant text-[11px]">username@email.com</p>
+           </div>
+         </section>
+ 
+-        {/* Quick Wallet Summary Card (Direct integration to Wallet History!) */}
++        {/* Quick Wallet Summary Card */}
+         <section
+           onClick={() => navigate("/vi-tien")}
+           className="bg-primary text-white p-5 rounded-lg relative overflow-hidden shadow-sm hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer group"
+@@ -82,7 +82,7 @@ export default function ProfilePage() {
+                 <span className="font-headline-md text-headline-md text-primary-fixed opacity-80">đ</span>
+               </div>
+             </div>
+-            <div className="flex items-center gap-1 bg-white/10 hover:bg-white/20 transition-colors px-3 py-1.5 rounded text-xs uppercase font-bold tracking-wider">
++            <div className="flex items-center gap-1 bg-white/10 hover:bg-white/20 transition-colors px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase">
+               Xem lịch sử
+               <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+             </div>
+@@ -107,15 +107,15 @@ export default function ProfilePage() {
+               <span className="material-symbols-outlined text-outline-variant text-[20px]">chevron_right</span>
+             </button>
+ 
+-            {/* Order Tracking */}
++            {/* Order Tracking (Point to /don-hang instead of SuccessPage!) */}
+             <button
+-              onClick={() => navigate("/dat-hang-thanh-cong")}
++              onClick={() => navigate("/don-hang")}
+               className="flex items-center justify-between p-4 border-b border-outline-variant/20 hover:bg-surface-container-low transition-colors text-left"
+             >
+               <div className="flex items-center gap-3">
+-                <span className="material-symbols-outlined text-primary text-[22px]">local_shipping</span>
++                <span className="material-symbols-outlined text-primary text-[22px]">receipt_long</span>
+                 <span className="font-body-md text-body-md font-bold text-on-surface uppercase tracking-wide text-xs">
+-                  Theo dõi đơn hàng
++                  Đơn hàng của tôi
+                 </span>
+               </div>
+               <span className="material-symbols-outlined text-outline-variant text-[20px]">chevron_right</span>
+@@ -135,7 +135,7 @@ export default function ProfilePage() {
+               <span className="material-symbols-outlined text-outline-variant text-[20px]">chevron_right</span>
+             </button>
+ 
+-            {/* Policy Page (Direct integration!) */}
++            {/* Policy Page */}
+             <button
+               onClick={() => navigate("/chinh-sach")}
+               className="flex items-center justify-between p-4 border-b border-outline-variant/20 hover:bg-surface-container-low transition-colors text-left"
+@@ -188,51 +188,54 @@ export default function ProfilePage() {
+                   Đăng xuất
+                 </span>
+               </div>
+-              <span className="material-symbols-outlined text-error text-[20px] opacity-70">chevron_right</span>
++              <span className="material-symbols-outlined text-error opacity-70 text-[20px]">chevron_right</span>
+             </button>
+           </div>
+         </section>
+       </main>
+ 
+       {/* Unified Bottom NavBar */}
+-      <nav className="fixed bottom-0 left-0 w-full flex justify-around items-center py-2 px-gutter bg-surface border-t border-outline-variant z-50 shrink-0 select-none">
++      <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-gutter pb-safe bg-surface border-t border-outline-variant">
+         <button
+-          onClick={() => handleBottomNav("/hub")}
+-          className="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-95 w-16"
++          onClick={() => handleBottomNav("/trang-chu")}
++          className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-90 w-16"
+         >
+           <span className="material-symbols-outlined">home</span>
+-          <span className="font-label-md text-[10px] uppercase font-semibold">Trang chủ</span>
++          <span className="font-label-md text-[10px] mt-1 font-sans">Trang chủ</span>
+         </button>
+         <button
+           onClick={() => handleBottomNav("/bo-loc")}
+-          className="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-95 w-16"
++          className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-90 w-16"
+         >
+           <span className="material-symbols-outlined">grid_view</span>
+-          <span className="font-label-md text-[10px] uppercase font-semibold">Danh mục</span>
++          <span className="font-label-md text-[10px] mt-1 font-sans">Danh mục</span>
+         </button>
+         <button
+-          onClick={() => handleBottomNav("/dat-hang-thanh-cong")}
+-          className="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-95 w-16"
++          onClick={() => handleBottomNav("/don-hang")}
++          className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-90 w-16"
+         >
+           <span className="material-symbols-outlined">receipt_long</span>
+-          <span className="font-label-md text-[10px] uppercase font-semibold">Đơn hàng</span>
++          <span className="font-label-md text-[10px] mt-1 font-sans">Đơn hàng</span>
+         </button>
+         <button
+           onClick={() => handleBottomNav("/thong-bao")}
+-          className="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-95 w-16"
++          className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-90 w-16"
+         >
+           <span className="material-symbols-outlined">notifications</span>
+-          <span className="font-label-md text-[10px] uppercase font-semibold">Thông báo</span>
++          <span className="font-label-md text-[10px] mt-1 font-sans">Thông báo</span>
+         </button>
+         <button
+           onClick={() => handleBottomNav("/toi")}
+-          className="flex flex-col items-center justify-center text-secondary relative active:scale-95 w-16"
++          className="flex flex-col items-center justify-center text-secondary relative active:scale-90 w-16"
+         >
+-          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
++          <span
++            className="material-symbols-outlined"
++            style={{ fontVariationSettings: "'FILL' 1" }}
++          >
+             person
+           </span>
+-          <span className="font-label-md text-[10px] uppercase font-bold">Tôi</span>
+-          <div className="absolute -bottom-1 w-1.5 h-1.5 bg-secondary rounded-full" />
++          <span className="font-label-md text-[10px] mt-1 font-sans font-bold">Tôi</span>
++          <div className="absolute -bottom-1 w-1 h-1 bg-secondary rounded-full"></div>
+         </button>
+       </nav>
+     </div>
+diff --git a/src/pages/RatingPage.tsx b/src/pages/RatingPage.tsx
+new file mode 100644
+index 0000000..f9a1e92
+--- /dev/null
++++ b/src/pages/RatingPage.tsx
+@@ -0,0 +1,223 @@
++import { useState, useRef } from "react";
++import { useNavigate } from "react-router-dom";
++import GrainTexture from "../components/GrainTexture";
++
++export default function RatingPage() {
++  const navigate = useNavigate();
++  const fileInputRef = useRef<HTMLInputElement>(null);
++  const [rating, setRating] = useState<number>(0);
++  const [reviewText, setReviewText] = useState("");
++  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
++  const [isSubmitting, setIsSubmitting] = useState(false);
++  const [submitText, setSubmitText] = useState("Gửi đánh giá");
++  const [submitSuccess, setSubmitSuccess] = useState(false);
++
++  const ratingOptions = ["Rất tệ", "Tệ", "Bình thường", "Tốt", "Tuyệt vời"];
++
++  const handleStarClick = (index: number) => {
++    setRating(index + 1);
++  };
++
++  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
++    const files = e.target.files;
++    if (files && files[0]) {
++      const reader = new FileReader();
++      reader.onload = (event) => {
++        if (event.target?.result) {
++          setUploadedImages((prev) => [...prev, event.target!.result as string]);
++        }
++      };
++      reader.readAsDataURL(files[0]);
++    }
++  };
++
++  const removeUploadedImage = (index: number) => {
++    setUploadedImages((prev) => prev.filter((_, idx) => idx !== index));
++  };
++
++  const handleSubmit = () => {
++    if (rating === 0) {
++      alert("Vui lòng chọn số sao đánh giá sản phẩm.");
++      return;
++    }
++
++    setIsSubmitting(true);
++    setSubmitText("Đang gửi...");
++
++    setTimeout(() => {
++      setSubmitText("Đã hoàn tất");
++      setSubmitSuccess(true);
++      setIsSubmitting(false);
++
++      setTimeout(() => {
++        setSubmitText("Gửi đánh giá");
++        setSubmitSuccess(false);
++        alert("Cảm ơn bạn đã gửi đánh giá sản phẩm!");
++        navigate(-1);
++      }, 1500);
++    }, 1000);
++  };
++
++  return (
++    <div className="bg-background text-on-surface flex flex-col min-h-screen font-sans relative antialiased select-none pb-24">
++      <GrainTexture />
++
++      {/* Top App Bar (Header) */}
++      <header className="fixed top-0 w-full z-50 bg-background border-b border-outline-variant">
++        <div className="flex justify-between items-center px-container-padding h-16 w-full max-w-screen-xl mx-auto">
++          <button
++            onClick={() => navigate(-1)}
++            className="active:scale-95 transition-transform w-10 h-10 flex items-center justify-center"
++          >
++            <span className="material-symbols-outlined text-primary">arrow_back</span>
++          </button>
++          <h1 className="font-headline-lg-mobile text-headline-lg-mobile text-primary font-bold uppercase tracking-tight">
++            Đánh giá sản phẩm
++          </h1>
++          <div className="w-10"></div> {/* Spacer for symmetry */}
++        </div>
++      </header>
++
++      {/* Main Content Canvas */}
++      <main className="flex-grow pt-20 pb-24 px-container-padding max-w-screen-sm mx-auto w-full relative z-10">
++        {/* Product Section (Heritage Style) */}
++        <div className="flex gap-4 mb-section-gap">
++          <div className="w-24 h-32 flex-shrink-0 bg-surface-variant overflow-hidden rounded-lg border border-outline-variant">
++            <img
++              alt="Heritage Tee Kem"
++              className="w-full h-full object-cover"
++              src="https://i.ibb.co/PG3p6wTs/6.png"
++            />
++          </div>
++          <div className="flex flex-col justify-center">
++            <span className="font-label-md text-label-md text-secondary uppercase mb-1 font-bold">
++              Mới nhất
++            </span>
++            <h2 className="font-headline-md text-headline-md text-primary leading-tight font-bold">
++              Áo thun Unisex - 100% COTTON - “Bánh Mì”
++            </h2>
++            <p className="font-body-md text-body-md text-on-surface-variant">
++              Phân loại: Kem / Size L
++            </p>
++          </div>
++        </div>
++
++        {/* Rating Section */}
++        <div className="bg-surface p-6 rounded-xl border border-outline-variant mb-gutter">
++          <div className="text-center mb-6">
++            <p className="font-body-lg text-body-lg text-primary font-semibold mb-4 uppercase tracking-widest">
++              Chất lượng sản phẩm
++            </p>
++            <div className="flex justify-center gap-2" id="star-container">
++              {[0, 1, 2, 3, 4].map((idx) => {
++                const isActive = rating > idx;
++                return (
++                  <button
++                    key={idx}
++                    onClick={() => handleStarClick(idx)}
++                    className="star-btn active:scale-90 transition-transform w-10 h-10 flex items-center justify-center"
++                  >
++                    <span
++                      className={`material-symbols-outlined text-4xl transition-colors ${
++                        isActive ? "text-secondary font-fill" : "text-outline-variant hover:text-secondary"
++                      }`}
++                      style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}
++                    >
++                      star
++                    </span>
++                  </button>
++                );
++              })}
++            </div>
++            <p
++              className={`font-label-md text-label-md text-secondary mt-3 transition-opacity font-bold ${
++                rating > 0 ? "opacity-100" : "opacity-0"
++              }`}
++            >
++              {rating > 0 ? ratingOptions[rating - 1] : ""}
++            </p>
++          </div>
++
++          {/* Review Content */}
++          <div className="space-y-4">
++            <div className="relative">
++              <textarea
++                value={reviewText}
++                onChange={(e) => setReviewText(e.target.value)}
++                className="w-full h-32 p-4 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-0 focus:border-secondary transition-colors font-body-md text-body-md placeholder:text-outline resize-none custom-scrollbar font-sans"
++                placeholder="Hãy chia sẻ trải nghiệm của bạn về sản phẩm..."
++              />
++            </div>
++
++            {/* Image Upload Section */}
++            <div className="flex flex-wrap gap-3" id="upload-container">
++              <button
++                type="button"
++                onClick={() => fileInputRef.current?.click()}
++                className="w-20 h-20 flex flex-col items-center justify-center border-2 border-dashed border-outline-variant rounded-lg cursor-pointer hover:bg-surface-variant transition-colors group bg-transparent"
++              >
++                <input
++                  type="file"
++                  accept="image/*"
++                  ref={fileInputRef}
++                  onChange={handleFileUpload}
++                  className="hidden"
++                />
++                <span className="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">
++                  add_a_photo
++                </span>
++                <span className="font-label-md text-[10px] text-on-surface-variant mt-1 uppercase tracking-tighter font-bold">
++                  Tải ảnh
++                </span>
++              </button>
++
++              {uploadedImages.map((src, index) => (
++                <div
++                  key={index}
++                  className="relative w-20 h-20 rounded-lg overflow-hidden border border-outline-variant animate-in fade-in zoom-in duration-300 shrink-0"
++                >
++                  <img src={src} className="w-full h-full object-cover" alt="Review upload" />
++                  <button
++                    onClick={() => removeUploadedImage(index)}
++                    className="absolute top-1 right-1 bg-primary/80 text-white rounded-full p-0.5 hover:bg-primary transition-colors w-5 h-5 flex items-center justify-center"
++                  >
++                    <span className="material-symbols-outlined text-sm">close</span>
++                  </button>
++                </div>
++              ))}
++            </div>
++          </div>
++        </div>
++
++        <div className="p-4 flex items-center gap-3 bg-surface-container-high rounded-lg mb-10 border border-outline-variant/20">
++          <span
++            className="material-symbols-outlined text-secondary"
++            style={{ fontVariationSettings: "'FILL' 1" }}
++          >
++            verified
++          </span>
++          <p className="font-label-md text-label-md text-on-surface-variant leading-relaxed">
++            Đánh giá của bạn sẽ giúp AoVie có cái nhìn chính xác hơn về sản phẩm này.
++          </p>
++        </div>
++      </main>
++
++      {/* Bottom Action Bar */}
++      <div className="fixed bottom-0 w-full bg-surface border-t border-outline-variant p-container-padding z-50">
++        <div className="max-w-screen-sm mx-auto">
++          <button
++            onClick={handleSubmit}
++            disabled={isSubmitting}
++            className={`w-full text-on-primary py-4 rounded-lg font-label-md text-label-md uppercase font-bold tracking-widest transition-all shadow-lg shadow-primary/10 ${
++              submitSuccess
++                ? "bg-secondary"
++                : "bg-primary hover:bg-on-primary-fixed-variant"
++            } ${isSubmitting ? "opacity-70 cursor-not-allowed" : "active:scale-[0.98]"}`}
++          >
++            {submitText}
++          </button>
++        </div>
++      </div>
++    </div>
++  );
++}

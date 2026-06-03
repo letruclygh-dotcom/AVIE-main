@@ -1,0 +1,41 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  font-family: "Be Vietnam Pro", sans-serif;
+  background-color: #fbf9f4;
+  min-height: max(884px, 100dvh);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
+}
+
+.grain-texture {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 99;
+  opacity: 0.03;
+  background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuBs94335Tyaa4sDXgAfWN8-2ibKtMW-IQSilaCENzY4tbK07W4H0hVTGFp_DsvPguFNderxBGZz9GuBuD68U6ouh1-l7IZASfacHe8QX1jbvik81D2e71o04fwQ_cMbT3fovOHTynCraSjcMtZbOjQmGAILVf1_p8MxnFHlcdQotajWx56sFY3OwCgWpUeju9oM9FddV7Dw0baBVAUhWWGNfXNG5p2yLEbwy_ejJABkt4epjQzQ2bCcXb3XRxAnnTVO_7CCmALbJQ03);
+}
+
+.asymmetric-border {
+  border-radius: 40px 4px 40px 4px;
+}
+
+.field-lift {
+  transition: transform 0.3s ease;
+  will-change: transform;
+}
+.field-lift:focus-within {
+  transform: translateY(-2px);
+}
+

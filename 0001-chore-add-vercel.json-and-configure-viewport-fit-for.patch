@@ -1,0 +1,42 @@
+From e8dbd9acb7ffbea0f18bac38f3d658e0ff16beff Mon Sep 17 00:00:00 2001
+From: Repo Maintainer <maintainer@example.com>
+Date: Wed, 3 Jun 2026 03:20:59 +0000
+Subject: [PATCH 1/2] chore: add vercel.json and configure viewport-fit for
+ mobile safe-areas
+
+---
+ index.html  | 2 +-
+ vercel.json | 8 ++++++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+ create mode 100644 vercel.json
+
+diff --git a/index.html b/index.html
+index bd84133..f336c30 100644
+--- a/index.html
++++ b/index.html
+@@ -2,7 +2,7 @@
+ <html lang="vi">
+   <head>
+     <meta charset="UTF-8" />
+-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
++    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+     <title>AoVie</title>
+     <link rel="preconnect" href="https://fonts.googleapis.com" />
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+diff --git a/vercel.json b/vercel.json
+new file mode 100644
+index 0000000..1323cda
+--- /dev/null
++++ b/vercel.json
+@@ -0,0 +1,8 @@
++{
++  "rewrites": [
++    {
++      "source": "/(.*)",
++      "destination": "/index.html"
++    }
++  ]
++}
+-- 
+2.43.0
+
