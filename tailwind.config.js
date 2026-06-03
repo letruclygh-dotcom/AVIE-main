@@ -67,6 +67,7 @@ export default {
         "container-padding": "16px"
       },
       fontFamily: {
+        beVietnamPro: ["Be Vietnam Pro", "sans-serif"],
         "body-md": ["Be Vietnam Pro"],
         "headline-md": ["Be Vietnam Pro"],
         "headline-lg": ["Be Vietnam Pro"],
