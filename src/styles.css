@@ -103,6 +103,15 @@ body {
   direction: ltr;
 }
 
+.address-page .material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
+}
+
+.address-card-active {
+  border-color: #95491a !important;
+  background-color: #fbf9f4;
+}
+
 .grain-texture {
   position: fixed;
   top: 0;
