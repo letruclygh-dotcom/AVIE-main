@@ -127,10 +127,19 @@ export default function PaymentPage() {
 
           {/* Section 2: Địa chỉ giao hàng */}
           <section>
-            <h2 className="font-headline-md text-headline-md mb-6 flex items-center gap-3 text-primary">
-              <span className="material-symbols-outlined">distance</span>
-              Địa chỉ giao hàng
-            </h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-headline-md text-headline-md flex items-center gap-3 text-primary">
+                <span className="material-symbols-outlined">distance</span>
+                Địa chỉ giao hàng
+              </h2>
+              <button
+                type="button"
+                onClick={() => navigate("/them-dia-chi-moi")}
+                className="font-label-md text-label-md text-secondary uppercase tracking-wider hover:underline"
+              >
+                + Thêm mới
+              </button>
+            </div>
             <div className="relative">
               <label
                 className={`font-label-md text-label-md mb-2 block uppercase tracking-wider transition-colors ${

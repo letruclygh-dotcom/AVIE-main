@@ -125,6 +125,14 @@ export default function HubPage() {
       badgeColor: "bg-surface-variant text-on-surface-variant",
     },
     {
+      path: "/them-dia-chi-moi",
+      title: "Thêm địa chỉ mới",
+      desc: "Form thêm địa chỉ giao hàng với thông tin liên hệ, tỉnh/quận/phường và đặt mặc định.",
+      icon: "add_location",
+      badge: "Mới",
+      badgeColor: "bg-secondary-fixed text-on-secondary-container font-bold",
+    },
+    {
       path: "/vi-tien",
       title: "Lịch sử giao dịch ví",
       desc: "Bản sao thẻ ví Terracotta, bộ lọc nạp/thanh toán và danh sách biến động số dư.",

@@ -64,6 +64,7 @@ export default function AddressPage() {
               </div>
               <button
                 type="button"
+                onClick={() => navigate("/them-dia-chi-moi")}
                 className="text-secondary hover:underline font-label-md text-label-md uppercase"
               >
                 Chỉnh sửa
@@ -85,6 +86,7 @@ export default function AddressPage() {
               <span className="font-headline-md text-headline-md text-on-surface">Ndip Nè</span>
               <button
                 type="button"
+                onClick={() => navigate("/them-dia-chi-moi")}
                 className="text-secondary hover:underline font-label-md text-label-md uppercase"
               >
                 Chỉnh sửa
@@ -130,6 +132,7 @@ export default function AddressPage() {
         <div className="max-w-2xl mx-auto">
           <button
             type="button"
+            onClick={() => navigate("/them-dia-chi-moi")}
             className="w-full py-4 bg-primary text-on-primary font-label-md text-label-md uppercase tracking-widest rounded-lg shadow-xl hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2"
           >
             <span className="material-symbols-outlined">add</span>

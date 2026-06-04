@@ -19,6 +19,7 @@ import NotificationPage from "./pages/NotificationPage";
 import NotificationDetailPage from "./pages/NotificationDetailPage";
 import SupportPage from "./pages/SupportPage";
 import AddressPage from "./pages/AddressPage";
+import AddAddressPage from "./pages/AddAddressPage";
 import OrdersPage from "./pages/OrdersPage";
 import RatingPage from "./pages/RatingPage";
 import ReviewsPage from "./pages/ReviewsPage";
@@ -63,6 +64,7 @@ export default function App() {
       <Route path="/chi-tiet-thong-bao" element={<NotificationDetailPage />} />
       <Route path="/ho-tro" element={<SupportPage />} />
       <Route path="/dia-chi-giao-hang" element={<AddressPage />} />
+      <Route path="/them-dia-chi-moi" element={<AddAddressPage />} />
       <Route path="/don-hang" element={<OrdersPage />} />
       <Route path="/danh-gia" element={<RatingPage />} />
       <Route path="/xem-danh-gia" element={<ReviewsPage />} />
