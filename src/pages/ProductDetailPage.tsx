@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import SizeChartModal from "../components/SizeChartModal";
 
 const IMAGES = [
   {
@@ -26,6 +27,7 @@ export default function ProductDetailPage() {
   const [selectedColor, setSelectedColor] = useState("den");
   const [selectedSize, setSelectedSize] = useState("S");
   const [activeTab, setActiveTab] = useState<"description" | "reviews">("description");
+  const [showSizeChart, setShowSizeChart] = useState(false);
 
   const handleGalleryScroll = () => {
     const el = galleryRef.current;
@@ -166,6 +168,7 @@ export default function ProductDetailPage() {
                 </label>
                 <button
                   type="button"
+                  onClick={() => setShowSizeChart(true)}
                   className="text-secondary font-label-md text-label-md flex items-center gap-1"
                 >
                   <span className="material-symbols-outlined text-[16px]">straighten</span>
@@ -327,6 +330,8 @@ export default function ProductDetailPage() {
           <span className="font-label-md text-label-md">Tôi</span>
         </Link>
       </nav>
+
+      {showSizeChart && <SizeChartModal onClose={() => setShowSizeChart(false)} />}
     </div>
   );
 }
