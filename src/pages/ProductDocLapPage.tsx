@@ -31,7 +31,6 @@ export default function ProductDocLapPage() {
   const [activeImage, setActiveImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState("den");
   const [selectedSize, setSelectedSize] = useState("S");
-  const [activeTab, setActiveTab] = useState<"description" | "reviews">("description");
   const [showSizeChart, setShowSizeChart] = useState(false);
 
   const handleGalleryScroll = () => {
@@ -221,72 +220,32 @@ export default function ProductDocLapPage() {
           <div className="border-b border-outline-variant flex gap-8 mb-4">
             <button
               type="button"
-              onClick={() => setActiveTab("description")}
-              className={`pb-4 font-label-md text-label-md uppercase tracking-wider ${
-                activeTab === "description"
-                  ? "border-b-2 border-primary text-primary"
-                  : "text-on-surface-variant"
-              }`}
+              className="pb-4 border-b-2 border-primary font-label-md text-label-md uppercase tracking-wider text-primary"
             >
               Mô tả chi tiết
             </button>
             <button
               type="button"
-              onClick={() => setActiveTab("reviews")}
-              className={`pb-4 font-label-md text-label-md uppercase tracking-wider ${
-                activeTab === "reviews"
-                  ? "border-b-2 border-primary text-primary"
-                  : "text-on-surface-variant"
-              }`}
+              onClick={() => navigate("/xem-danh-gia")}
+              className="pb-4 font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors"
             >
               Đánh giá (12)
             </button>
           </div>
 
-          {activeTab === "description" ? (
-            <div className="font-body-md text-body-md text-on-surface-variant space-y-2">
-              <p>– Chất liệu: 100% Cotton 2 chiều, định lượng 250gsm, dày dặn, đứng form.</p>
-              <p>– Hình in: Công nghệ in lụa cao cấp, bền màu, không bong tróc.</p>
-              <p>– Kiểu dáng: Boxy/Oversize unisex phù hợp cho cả nam và nữ.</p>
-              <p>– Xuất xứ: Tự hào sản xuất tại Việt Nam bởi đội ngũ AOVIE.</p>
-            </div>
-          ) : (
-            <div className="font-body-md text-body-md text-on-surface-variant space-y-4">
-              <div className="border-b border-outline-variant/50 pb-4">
-                <div className="flex items-center gap-1 text-secondary mb-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <span
-                      key={star}
-                      className="material-symbols-outlined text-[16px]"
-                      style={{ fontVariationSettings: "'FILL' 1" }}
-                    >
-                      star
-                    </span>
-                  ))}
-                </div>
-                <p className="font-label-md text-label-md text-primary mb-1">Lan Phương</p>
-                <p>Thiết kế &quot;Độc lập&quot; rất ý nghĩa, chất cotton cao cấp, form oversize đẹp!</p>
-              </div>
-              <div className="border-b border-outline-variant/50 pb-4">
-                <div className="flex items-center gap-1 text-secondary mb-1">
-                  {[1, 2, 3, 4].map((star) => (
-                    <span
-                      key={star}
-                      className="material-symbols-outlined text-[16px]"
-                      style={{ fontVariationSettings: "'FILL' 1" }}
-                    >
-                      star
-                    </span>
-                  ))}
-                  <span className="material-symbols-outlined text-[16px] text-outline-variant">
-                    star
-                  </span>
-                </div>
-                <p className="font-label-md text-label-md text-primary mb-1">Quốc Anh</p>
-                <p>Màu hồng pastel xinh, in sắc nét. Giao hàng nhanh, đóng gói cẩn thận.</p>
-              </div>
-            </div>
-          )}
+          <div className="font-body-md text-body-md text-on-surface-variant space-y-2">
+            <p>– Chất liệu: 100% Cotton 2 chiều, định lượng 250gsm, dày dặn, đứng form.</p>
+            <p>– Hình in: Công nghệ in lụa cao cấp, bền màu, không bong tróc.</p>
+            <p>– Kiểu dáng: Boxy/Oversize unisex phù hợp cho cả nam và nữ.</p>
+            <p>– Xuất xứ: Tự hào sản xuất tại Việt Nam bởi đội ngũ AOVIE.</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => navigate("/xem-danh-gia")}
+            className="mt-4 w-full py-3 border border-primary text-primary font-label-md text-label-md uppercase tracking-wider hover:bg-primary hover:text-white transition-all active:scale-95"
+          >
+            Xem tất cả đánh giá
+          </button>
         </section>
       </main>
 

@@ -83,7 +83,13 @@ export default function OrderDetailPage() {
               <p className="font-body-lg text-body-lg font-bold text-secondary">225.000đ</p>
             </div>
           </div>
-          <div className="pt-2 flex justify-end">
+          <div className="pt-2 flex justify-end gap-2">
+            <button
+              onClick={() => navigate("/xem-danh-gia")}
+              className="px-4 py-2 border border-primary text-primary font-label-md text-xs uppercase tracking-wider rounded font-bold hover:bg-primary hover:text-white transition-all active:scale-95"
+            >
+              Xem Đánh Giá
+            </button>
             <button
               onClick={() => navigate("/danh-gia")}
               className="px-4 py-2 bg-secondary text-white font-label-md text-xs uppercase tracking-wider rounded font-bold hover:opacity-90 active:scale-95 transition-all"

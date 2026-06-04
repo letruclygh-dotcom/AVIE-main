@@ -80,7 +80,16 @@ const INITIAL_ORDERS: OrderItem[] = [
     status: "shipping",
   },
   {
-    id: "c1",
+    id: "d1",
+    code: "AV29800",
+    price: "225.000đ",
+    imageSrc: "https://i.ibb.co/hxBR2WM3/3.png",
+    title: 'Áo Thun Unisex - 100% Cotton - "Độc Lập"',
+    color: "Hồng",
+    quantity: "01",
+    status: "delivered",
+  },
+  {
     code: "AV-100201",
     price: "225.000đ",
     imageSrc:
@@ -121,9 +130,11 @@ function tabClass(active: boolean) {
 function ShippingOrderCard({
   order,
   onTrack,
+  onViewReviews,
 }: {
   order: OrderItem;
   onTrack: () => void;
+  onViewReviews: () => void;
 }) {
   return (
     <article className="bg-surface-container rounded-lg border border-outline-variant overflow-hidden">
@@ -149,18 +160,27 @@ function ShippingOrderCard({
             </div>
           </div>
         </div>
-        <div className="pt-4 border-t border-outline-variant flex justify-between items-center">
+        <div className="pt-4 border-t border-outline-variant flex justify-between items-center gap-3">
           <div>
             <p className="font-label-md text-label-md text-on-surface-variant">Tổng tiền</p>
             <p className="font-headline-md text-headline-md text-primary">{order.price}</p>
           </div>
-          <button
-            type="button"
-            onClick={onTrack}
-            className="bg-primary text-on-primary px-6 py-2 rounded font-label-md text-label-md uppercase tracking-widest active:scale-95 transition-transform shadow-sm"
-          >
-            THEO DÕI ĐƠN
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={onViewReviews}
+              className="border border-primary text-primary px-4 py-2 rounded font-label-md text-label-md uppercase tracking-wider active:scale-95 transition-transform"
+            >
+              Xem đánh giá
+            </button>
+            <button
+              type="button"
+              onClick={onTrack}
+              className="bg-primary text-on-primary px-6 py-2 rounded font-label-md text-label-md uppercase tracking-widest active:scale-95 transition-transform shadow-sm"
+            >
+              THEO DÕI ĐƠN
+            </button>
+          </div>
         </div>
       </div>
     </article>
@@ -365,6 +385,7 @@ export default function OrdersPage() {
                     key={order.id}
                     order={order}
                     onTrack={() => navigate("/theo-doi-don-hang")}
+                    onViewReviews={() => navigate("/xem-danh-gia")}
                   />
                 );
               }
@@ -484,13 +505,21 @@ function GenericOrderCard({
             </div>
           </div>
         </div>
-        <div className="pt-4 border-t border-outline-variant flex justify-between items-center">
+        <div className="pt-4 border-t border-outline-variant flex justify-between items-center gap-3 flex-wrap">
           <div>
             <p className="font-label-md text-label-md text-on-surface-variant">Tổng tiền</p>
             <p className="font-headline-md text-headline-md text-primary">{order.price}</p>
           </div>
+          <div className="flex gap-2 flex-wrap justify-end">
+            <button
+              type="button"
+              onClick={() => onNavigate("/xem-danh-gia")}
+              className="px-4 py-2 border border-primary text-primary font-label-md text-label-md uppercase rounded"
+            >
+              Xem đánh giá
+            </button>
           {order.status === "pending" && (
-            <div className="flex gap-2">
+            <>
               <button
                 type="button"
                 onClick={() => onNavigate("/chi-tiet-don-hang")}
@@ -505,7 +534,7 @@ function GenericOrderCard({
               >
                 Hủy đơn
               </button>
-            </div>
+            </>
           )}
           {order.status === "delivered" && (
             <button
@@ -516,6 +545,7 @@ function GenericOrderCard({
               ĐÁNH GIÁ
             </button>
           )}
+          </div>
         </div>
       </div>
     </article>

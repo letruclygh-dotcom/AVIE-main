@@ -101,6 +101,14 @@ export default function HubPage() {
       badgeColor: "bg-secondary-fixed text-on-secondary-container font-bold",
     },
     {
+      path: "/xem-danh-gia",
+      title: "Danh sách đánh giá sản phẩm",
+      desc: "Trang xem tất cả đánh giá từ khách hàng với bộ lọc sao, ảnh và thống kê điểm trung bình.",
+      icon: "reviews",
+      badge: "Mới",
+      badgeColor: "bg-secondary-fixed text-on-secondary-container font-bold",
+    },
+    {
       path: "/theo-doi-don-hang",
       title: "Theo dõi đơn hàng (Vận chuyển)",
       desc: "Lộ trình giao nhận đơn hàng trực quan, bản đồ Saigon và phím liên hệ gọi Shipper.",
