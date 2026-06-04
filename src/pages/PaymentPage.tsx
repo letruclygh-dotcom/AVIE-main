@@ -7,10 +7,10 @@ type PaymentMethod = "cod" | "bank" | "wallet";
 
 export default function PaymentPage() {
   const navigate = useNavigate();
-  const [recipientName, setRecipientName] = useState("Nguyễn Văn A");
-  const [recipientPhone, setRecipientPhone] = useState("090 1234 567");
+  const [recipientName, setRecipientName] = useState("Helen Chen");
+  const [recipientPhone, setRecipientPhone] = useState("0938752999");
   const [shippingAddress, setShippingAddress] = useState(
-    "Số nhà, tên đường, phường/xã, quận/huyện..."
+    "Số 45, Đường Lê Lợi, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh"
   );
   const [shippingMethod, setShippingMethod] = useState<ShippingMethod>("standard");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
@@ -99,7 +99,7 @@ export default function PaymentPage() {
                   onFocus={() => setActiveInput("name")}
                   onBlur={() => setActiveInput(null)}
                   className="w-full bg-transparent border-0 border-b border-outline-variant focus:border-secondary focus:ring-0 px-0 py-2 font-body-md text-body-md transition-all placeholder:text-on-surface-variant/40 font-sans"
-                  placeholder="Nguyễn Văn A"
+                  placeholder="Helen Chen"
                   required
                 />
               </div>
@@ -118,7 +118,7 @@ export default function PaymentPage() {
                   onFocus={() => setActiveInput("phone")}
                   onBlur={() => setActiveInput(null)}
                   className="w-full bg-transparent border-0 border-b border-outline-variant focus:border-secondary focus:ring-0 px-0 py-2 font-body-md text-body-md transition-all placeholder:text-on-surface-variant/40 font-sans"
-                  placeholder="090 1234 567"
+                  placeholder="0938752999"
                   required
                 />
               </div>
@@ -154,7 +154,7 @@ export default function PaymentPage() {
                 onFocus={() => setActiveInput("address")}
                 onBlur={() => setActiveInput(null)}
                 className="w-full bg-transparent border-0 border-b border-outline-variant focus:border-secondary focus:ring-0 px-0 py-2 font-body-md text-body-md transition-all resize-none placeholder:text-on-surface-variant/40 font-sans"
-                placeholder="Số nhà, tên đường, phường/xã, quận/huyện..."
+                placeholder="Số 45, Đường Lê Lợi, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh"
                 rows={2}
                 required
               />

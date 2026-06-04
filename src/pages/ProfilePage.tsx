@@ -53,13 +53,13 @@ export default function ProfilePage() {
           {/* User Meta */}
           <div className="flex-grow">
             <div className="flex items-center gap-2">
-              <h2 className="font-headline-md text-primary text-[18px] font-bold leading-tight">Nguyễn Văn A</h2>
+              <h2 className="font-headline-md text-primary text-[18px] font-bold leading-tight">Helen Chen</h2>
               <span className="bg-secondary-fixed text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded-full uppercase shrink-0">
                 Gold
               </span>
             </div>
-            <p className="font-label-md text-label-md text-on-surface-variant mt-1">090 123 4567</p>
-            <p className="font-label-md text-label-md text-on-surface-variant text-[11px]">username@email.com</p>
+            <p className="font-label-md text-label-md text-on-surface-variant mt-1">0938752999</p>
+            <p className="font-label-md text-label-md text-on-surface-variant text-[11px]">helen.chen@gmail.com</p>
           </div>
         </section>
 

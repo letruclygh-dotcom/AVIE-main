@@ -55,7 +55,7 @@ export default function LoginPage() {
                   <span className="material-symbols-outlined text-outline text-[20px]">person</span>
                   <input
                     className="bg-transparent border-none w-full p-0 font-body-lg text-body-lg focus:ring-0 text-on-surface placeholder:text-outline/40"
-                    placeholder="username@email.com"
+                    placeholder="helen.chen@gmail.com"
                     type="text"
                     value={values.username}
                     onChange={(e) => setValues((s) => ({ ...s, username: e.target.value }))}

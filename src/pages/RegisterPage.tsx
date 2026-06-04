@@ -104,7 +104,7 @@ export default function RegisterPage() {
                 className="w-full border-b border-outline-variant py-3 px-1 focus:outline-none focus:border-secondary transition-colors font-body-md text-body-md placeholder:text-outline-variant bg-transparent"
                 id="full_name"
                 name="full_name"
-                placeholder="Nguyễn Văn A"
+                placeholder="Helen Chen"
                 type="text"
                 value={values.full_name}
                 onChange={(e) => setValues((s) => ({ ...s, full_name: e.target.value }))}
@@ -123,7 +123,7 @@ export default function RegisterPage() {
                 className="w-full border-b border-outline-variant py-3 px-1 focus:outline-none focus:border-secondary transition-colors font-body-md text-body-md placeholder:text-outline-variant bg-transparent"
                 id="phone"
                 name="phone"
-                placeholder="090 123 4567"
+                placeholder="0938752999"
                 type="tel"
                 value={values.phone}
                 onChange={(e) => setValues((s) => ({ ...s, phone: e.target.value }))}
@@ -140,7 +140,7 @@ export default function RegisterPage() {
                 className="w-full border-b border-outline-variant py-3 px-1 focus:outline-none focus:border-secondary transition-colors font-body-md text-body-md placeholder:text-outline-variant bg-transparent"
                 id="email"
                 name="email"
-                placeholder="example@email.com"
+                placeholder="helen.chen@gmail.com"
                 type="email"
                 value={values.email}
                 onChange={(e) => setValues((s) => ({ ...s, email: e.target.value }))}

@@ -110,14 +110,14 @@ export default function OrderDetailPage() {
                 NGƯỜI NHẬN
               </p>
               <p className="font-body-lg text-body-lg text-on-surface font-bold">
-                Nguyễn Minh Hoàng
+                Helen Chen
               </p>
-              <p className="font-body-md text-body-md text-on-surface-variant">090 123 4567</p>
+              <p className="font-body-md text-body-md text-on-surface-variant">0938752999</p>
             </div>
             <div className="space-y-1">
               <p className="font-label-md text-label-md text-on-surface-variant font-bold">Địa chỉ</p>
               <p className="font-body-md text-body-md text-on-surface leading-relaxed">
-                123 Đường Tôn Thất Đạm, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh
+                Số 45, Đường Lê Lợi, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh
               </p>
             </div>
           </div>

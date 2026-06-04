@@ -95,7 +95,7 @@ export default function ProfileSettingsPage() {
             </button>
           </div>
           <h2 className="font-headline-md text-headline-md text-primary">Helen Chen</h2>
-          <p className="font-body-md text-body-md text-on-surface-variant">helenchen@gmail.com</p>
+          <p className="font-body-md text-body-md text-on-surface-variant">helen.chen@gmail.com</p>
         </section>
 
         {/* Settings List */}

@@ -106,7 +106,7 @@ export default function AddAddressPage() {
                 <input
                   className="w-full bg-surface border-0 border-b border-outline-variant px-0 py-3 font-body-md text-body-md placeholder:text-outline focus:ring-0 focus:border-secondary transition-colors"
                   id="full_name"
-                  placeholder="Vd: Nguyễn Văn A"
+                  placeholder="Vd: Helen Chen"
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
@@ -121,7 +121,7 @@ export default function AddAddressPage() {
                 <input
                   className="w-full bg-surface border-0 border-b border-outline-variant px-0 py-3 font-body-md text-body-md placeholder:text-outline focus:ring-0 focus:border-secondary transition-colors"
                   id="phone"
-                  placeholder="0xxx xxx xxx"
+                  placeholder="0938752999"
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
