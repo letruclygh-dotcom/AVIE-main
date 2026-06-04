@@ -170,7 +170,7 @@ export default function HomePage() {
               </div>
             </Link>
             {/* Product 3 */}
-            <Link className="group cursor-pointer block" to="/thanh-toan">
+            <Link className="group cursor-pointer block" to="/san-pham/ao-doc-lap">
               <div className="aspect-[3/4] bg-surface-container overflow-hidden rounded mb-3 relative">
                 <img
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

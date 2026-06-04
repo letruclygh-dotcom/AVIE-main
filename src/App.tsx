@@ -28,6 +28,7 @@ import VouchersPage from "./pages/VouchersPage";
 import PaymentCardsPage from "./pages/PaymentCardsPage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
+import ProductDocLapPage from "./pages/ProductDocLapPage";
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
       <Route path="/" element={<SplashPage />} />
       <Route path="/danh-muc" element={<CategoryPage />} />
       <Route path="/san-pham/ao-banh-mi" element={<ProductDetailPage />} />
+      <Route path="/san-pham/ao-doc-lap" element={<ProductDocLapPage />} />
       <Route path="/hub" element={<HubPage />} />
       <Route path="/gioi-thieu" element={<AboutPage />} />
       <Route path="/trang-chu" element={<HomePage />} />

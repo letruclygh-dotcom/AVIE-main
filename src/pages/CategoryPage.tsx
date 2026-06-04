@@ -79,6 +79,10 @@ export default function CategoryPage() {
       navigate("/san-pham/ao-banh-mi");
       return;
     }
+    if (product.id === 3) {
+      navigate("/san-pham/ao-doc-lap");
+      return;
+    }
     if (
       window.confirm(
         `Bạn muốn chọn mua nhanh sản phẩm "${product.name}" với giá ${product.price}?`
