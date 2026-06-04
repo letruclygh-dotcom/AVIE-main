@@ -79,6 +79,10 @@ export default function CategoryPage() {
       navigate("/san-pham/ao-banh-mi");
       return;
     }
+    if (product.id === 2) {
+      navigate("/san-pham/ao-non-la");
+      return;
+    }
     if (product.id === 3) {
       navigate("/san-pham/ao-doc-lap");
       return;
