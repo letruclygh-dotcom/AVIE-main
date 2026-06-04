@@ -75,7 +75,10 @@ export default function CategoryPage() {
   const [addedStates, setAddedStates] = useState<Record<number, boolean>>({});
 
   const handleProductClick = (product: Product) => {
-    console.log("Navigating to SCREEN_101 with product:", product);
+    if (product.id === 1) {
+      navigate("/san-pham/ao-banh-mi");
+      return;
+    }
     if (
       window.confirm(
         `Bạn muốn chọn mua nhanh sản phẩm "${product.name}" với giá ${product.price}?`

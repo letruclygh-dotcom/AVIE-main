@@ -138,7 +138,7 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-2 gap-x-3 gap-y-8">
             {/* Product 1 */}
-            <Link className="group cursor-pointer block" to="/thanh-toan">
+            <Link className="group cursor-pointer block" to="/san-pham/ao-banh-mi">
               <div className="aspect-[3/4] bg-surface-container overflow-hidden rounded mb-3 relative">
                 <img
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
