@@ -195,19 +195,7 @@ export default function ProfilePage() {
               <span className="material-symbols-outlined text-outline-variant text-[20px]">chevron_right</span>
             </button>
 
-            {/* App Settings */}
-            <button
-              onClick={() => navigate("/thong-tin-ca-nhan")}
-              className="flex items-center justify-between p-4 border-b border-outline-variant/20 hover:bg-surface-container-low transition-colors text-left"
-            >
-              <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary text-[22px]">tune</span>
-                <span className="font-body-md text-body-md font-bold text-on-surface uppercase tracking-wide text-xs">
-                  Cài đặt tài khoản
-                </span>
-              </div>
-              <span className="material-symbols-outlined text-outline-variant text-[20px]">chevron_right</span>
-            </button>
+
 
             {/* Logout */}
             <button
