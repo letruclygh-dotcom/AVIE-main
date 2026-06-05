@@ -47,7 +47,11 @@ export default function ProfilePage() {
         <section className="bg-surface border border-outline-variant p-5 rounded-lg flex items-center gap-4 mt-2 shadow-xs">
           {/* Avatar frame */}
           <div className="w-16 h-16 rounded-full border-2 border-secondary overflow-hidden shrink-0 bg-surface-container flex items-center justify-center">
-            <span className="material-symbols-outlined text-outline text-[40px]">account_circle</span>
+            <img
+              className="w-full h-full object-cover"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmcQLLBc9IUdGbgELw-Nrt73xEwIxwER6R2B3tJUNget63iEy0thGJt5UCCv9q-9Tha8NWXDhs2ERfYMPtuANAb2Ro2Zo5ocp_mKin2808Blh1Uknriax8Kv_a5fBo22UYNZdFlVP-DKvhUvp0nIUbuesbuOFZKPnCd2fmcS3yWGWroMXIr36x4VPjBvMA8YFmNWb5H4l8Of84EeY5swiSqGujAcDmgYq2hS_Fa7KOZV88oPHyDzriCdjjLf2_uko34VsoJVMoAYMxbw"
+              alt="Helen Chen Avatar"
+            />
           </div>
 
           {/* User Meta */}
