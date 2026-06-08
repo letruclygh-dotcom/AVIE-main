@@ -1,115 +1,137 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import GrainTexture from "../components/GrainTexture";
+import { supabase } from "../lib/supabaseClient";
 
-interface Product {
-  id: number;
-  name: string;
-  category: string;
-  price: string;
-  image_url: string[];
-  colors: string[];
-  stock: number;
-}
-
-const PRODUCTS: Product[] = [
-  {
-    id: 1,
-    name: "Áo Thun Unisex - 100% COTTON - “Bánh Mì”",
-    category: "ÁO",
-    price: "225.000đ",
-    image_url: ["https://i.ibb.co/PG3p6wTs/6.png", "https://i.ibb.co/BKF66ZPz/7.png"],
-    colors: ["Màu đen", "Màu trắng"],
-    stock: 100
-  },
-  {
-    id: 2,
-    name: "Áo Thun Unisex  - 100% COTTON - \"Nón Lá\"",
-    category: "ÁO",
-    price: "225.000đ",
-    image_url: ["https://i.ibb.co/zhP9w9gz/10.png", "https://i.ibb.co/ynWcFRFG/9.png", "https://i.ibb.co/S7Qmrfv9/8.png"],
-    colors: ["Màu đen", "Màu trắng", "Màu hồng"],
-    stock: 100
-  },
-  {
-    id: 3,
-    name: "Áo Thun Unisex - 100% Cotton - “Độc Lập”",
-    category: "ÁO",
-    price: "225.000đ",
-    image_url: ["https://i.ibb.co/hxBR2WM3/3.png", "https://i.ibb.co/d02Tz6GF/2.png", "https://i.ibb.co/CK3rvyfb/1.png"],
-    colors: ["Màu đen", "Màu trắng", "Màu hồng"],
-    stock: 100
-  },
-  {
-    id: 4,
-    name: "Túi Tote Canvas In Hình Hạ Long Bay",
-    category: "TÚI",
-    price: "59.000đ",
-    image_url: ["https://i.ibb.co/nsFs3RHn/13.png"],
-    colors: [],
-    stock: 100
-  },
-  {
-    id: 5,
-    name: "Túi Tote Canvas In Hình Tháp Rùa",
-    category: "TÚI",
-    price: "59.000đ",
-    image_url: ["https://i.ibb.co/1JR1HBXr/12.png"],
-    colors: [],
-    stock: 100
-  },
-  {
-    id: 6,
-    name: "Túi Tote Canvas In Hình Việt Nam",
-    category: "TÚI",
-    price: "59.000đ",
-    image_url: ["https://i.ibb.co/FvnTxYt/11.png"],
-    colors: [],
-    stock: 100
-  }
-];
+const getColorClass = (colorLabel: string) => {
+  const map: Record<string, string> = {
+    "Đen": "bg-black",
+    "Trắng": "bg-white border border-outline-variant",
+    "Hồng": "bg-pink-400",
+    "Kem": "bg-amber-100",
+    "Đen Than": "bg-zinc-800",
+    "Đỏ": "bg-red-600",
+    "Xanh": "bg-blue-600",
+  };
+  return map[colorLabel] || "bg-gray-300";
+};
 
 export default function CategoryPage() {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState<"all" | "ÁO" | "TÚI">("all");
-  const [addedStates, setAddedStates] = useState<Record<number, boolean>>({});
+  const [categories, setCategories] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
+  const [addedStates, setAddedStates] = useState<Record<string, boolean>>({});
+  const [cartCount, setCartCount] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  const handleProductClick = (product: Product) => {
-    if (product.id === 1) {
-      navigate("/san-pham/ao-banh-mi");
-      return;
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      // Fetch categories
+      const { data: catData, error: catErr } = await supabase
+        .from("categories")
+        .select("*");
+      if (!catErr) {
+        setCategories(catData || []);
+      }
+
+      // Fetch products
+      const { data: prodData, error: prodErr } = await supabase
+        .from("products")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (!prodErr) {
+        setProducts(prodData || []);
+      }
+
+      // Load cart count
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { count, error: cartError } = await supabase
+          .from("cart_items")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", session.user.id);
+        if (!cartError && count !== null) {
+          setCartCount(count);
+        }
+      }
+      setLoading(false);
     }
-    if (product.id === 2) {
-      navigate("/san-pham/ao-non-la");
-      return;
-    }
-    if (product.id === 3) {
-      navigate("/san-pham/ao-doc-lap");
-      return;
-    }
-    if (
-      window.confirm(
-        `Bạn muốn chọn mua nhanh sản phẩm "${product.name}" với giá ${product.price}?`
-      )
-    ) {
-      navigate("/thanh-toan");
-    }
+    loadData();
+  }, []);
+
+  const handleProductClick = (slug: string) => {
+    navigate(`/san-pham/${slug}`);
   };
 
-  const handleAddClick = (e: React.MouseEvent, product: Product) => {
+  const handleAddClick = async (e: React.MouseEvent, product: any) => {
     e.preventDefault();
     e.stopPropagation();
 
-    // Visual feedback
-    setAddedStates((prev) => ({ ...prev, [product.id]: true }));
-    setTimeout(() => {
-      setAddedStates((prev) => ({ ...prev, [product.id]: false }));
-    }, 1500);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ!");
+      navigate("/dang-nhap");
+      return;
+    }
+
+    if (product.stock <= 0) {
+      alert("Sản phẩm đã hết hàng!");
+      return;
+    }
+
+    const defaultColor = product.colors && product.colors.length > 0 ? product.colors[0] : "";
+    const defaultSize = product.sizes && product.sizes.length > 0 ? product.sizes[0] : "";
+
+    try {
+      const { data: existing } = await supabase
+        .from("cart_items")
+        .select("*")
+        .eq("user_id", session.user.id)
+        .eq("product_id", product.id)
+        .eq("color", defaultColor)
+        .eq("size", defaultSize)
+        .maybeSingle();
+
+      if (existing) {
+        const newQty = existing.quantity + 1;
+        if (newQty > product.stock) {
+          alert(`Không thể thêm! Chỉ còn ${product.stock} sản phẩm trong kho.`);
+          return;
+        }
+        await supabase
+          .from("cart_items")
+          .update({ quantity: newQty })
+          .eq("id", existing.id);
+      } else {
+        await supabase
+          .from("cart_items")
+          .insert({
+            user_id: session.user.id,
+            product_id: product.id,
+            quantity: 1,
+            color: defaultColor,
+            size: defaultSize,
+          });
+      }
+
+      // Update cart count
+      setCartCount((c) => c + 1);
+
+      // Visual feedback
+      setAddedStates((prev) => ({ ...prev, [product.id]: true }));
+      setTimeout(() => {
+        setAddedStates((prev) => ({ ...prev, [product.id]: false }));
+      }, 1500);
+    } catch (err: any) {
+      alert("Lỗi thêm vào giỏ hàng: " + err.message);
+    }
   };
 
-  const filteredProducts = PRODUCTS.filter((product) => {
-    if (selectedCategory === "all") return true;
-    return product.category === selectedCategory;
+  const filteredProducts = products.filter((product) => {
+    if (selectedCategoryId === "all") return true;
+    return product.category_id === selectedCategoryId;
   });
 
   return (
@@ -138,7 +160,11 @@ export default function CategoryPage() {
             className="hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200 relative"
           >
             <span className="material-symbols-outlined text-primary">shopping_bag</span>
-            <span className="absolute -top-1 -right-1 bg-secondary text-on-secondary text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">2</span>
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-secondary text-on-secondary text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
+                {cartCount}
+              </span>
+            )}
           </button>
         </div>
       </header>
@@ -148,9 +174,9 @@ export default function CategoryPage() {
         {/* Category Chips */}
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-container-padding px-container-padding no-scrollbar scroll-smooth">
           <button 
-            onClick={() => setSelectedCategory("all")}
+            onClick={() => setSelectedCategoryId("all")}
             className={`px-4 py-2 font-label-md text-label-md rounded-[2px] uppercase whitespace-nowrap transition-colors ${
-              selectedCategory === "all" 
+              selectedCategoryId === "all" 
                 ? "bg-primary text-on-primary" 
                 : "border border-outline text-primary hover:bg-surface-variant/30"
             }`}
@@ -158,89 +184,90 @@ export default function CategoryPage() {
             Tất cả
           </button>
           
-          <button 
-            onClick={() => setSelectedCategory("ÁO")}
-            className={`px-4 py-2 font-label-md text-label-md rounded-[2px] uppercase whitespace-nowrap transition-colors ${
-              selectedCategory === "ÁO" 
-                ? "bg-primary text-on-primary" 
-                : "border border-outline text-primary hover:bg-surface-variant/30"
-            }`}
-          >
-            Áo thun
-          </button>
-          
-          <button 
-            onClick={() => setSelectedCategory("TÚI")}
-            className={`px-4 py-2 font-label-md text-label-md rounded-[2px] uppercase whitespace-nowrap transition-colors ${
-              selectedCategory === "TÚI" 
-                ? "bg-primary text-on-primary" 
-                : "border border-outline text-primary hover:bg-surface-variant/30"
-            }`}
-          >
-            Túi
-          </button>
+          {categories.map((cat) => (
+            <button 
+              key={cat.id}
+              onClick={() => setSelectedCategoryId(cat.id)}
+              className={`px-4 py-2 font-label-md text-label-md rounded-[2px] uppercase whitespace-nowrap transition-colors ${
+                selectedCategoryId === cat.id 
+                  ? "bg-primary text-on-primary" 
+                  : "border border-outline text-primary hover:bg-surface-variant/30"
+              }`}
+            >
+              {cat.name}
+            </button>
+          ))}
         </div>
       </section>
 
       {/* Main Content: Product Grid */}
       <main className="flex-grow px-container-padding pb-24">
-        <div className="grid grid-cols-2 gap-x-gutter gap-y-8 max-w-screen-xl mx-auto">
-          {filteredProducts.map((product) => (
-            <div 
-              key={product.id}
-              className="flex flex-col group cursor-pointer"
-              onClick={() => handleProductClick(product)}
-            >
-              <div className="aspect-[3/4] bg-surface-variant relative overflow-hidden mb-3 border border-outline-variant">
-                <img 
-                  alt={product.name} 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                  src={product.image_url[0]} 
-                />
-                <button 
-                  onClick={(e) => handleAddClick(e, product)}
-                  className="absolute bottom-2 right-2 w-8 h-8 bg-surface/90 flex items-center justify-center rounded-full md:opacity-0 group-hover:opacity-100 transition-opacity active:scale-90"
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <span className="animate-spin material-symbols-outlined text-4xl text-primary">progress_activity</span>
+          </div>
+        ) : filteredProducts.length === 0 ? (
+          <p className="text-center text-on-surface-variant py-20">Không có sản phẩm nào trong danh mục này.</p>
+        ) : (
+          <div className="grid grid-cols-2 gap-x-gutter gap-y-8 max-w-screen-xl mx-auto">
+            {filteredProducts.map((product) => {
+              const img = product.image_urls && product.image_urls.length > 0 ? product.image_urls[0] : "https://placehold.co/300x400?text=AoVie";
+              return (
+                <div 
+                  key={product.id}
+                  className="flex flex-col group cursor-pointer"
+                  onClick={() => handleProductClick(product.slug)}
                 >
-                  {addedStates[product.id] ? (
-                    <span 
-                      className="material-symbols-outlined text-[18px] text-secondary" 
-                      style={{ fontVariationSettings: "'FILL' 1" }}
+                  <div className="aspect-[3/4] bg-surface-variant relative overflow-hidden mb-3 border border-outline-variant">
+                    <img 
+                      alt={product.name} 
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                      src={img} 
+                    />
+                    <button 
+                      onClick={(e) => handleAddClick(e, product)}
+                      disabled={product.stock <= 0}
+                      className="absolute bottom-2 right-2 w-8 h-8 bg-surface/90 flex items-center justify-center rounded-full md:opacity-0 group-hover:opacity-100 transition-opacity active:scale-90 disabled:opacity-50"
                     >
-                      check_circle
-                    </span>
-                  ) : (
-                    <span className="material-symbols-outlined text-[18px] text-primary">add</span>
+                      {addedStates[product.id] ? (
+                        <span 
+                          className="material-symbols-outlined text-[18px] text-secondary" 
+                          style={{ fontVariationSettings: "'FILL' 1" }}
+                        >
+                          check_circle
+                        </span>
+                      ) : (
+                        <span className="material-symbols-outlined text-[18px] text-primary">
+                          {product.stock > 0 ? "add" : "block"}
+                        </span>
+                      )}
+                    </button>
+                  </div>
+                  
+                  <h3 className="font-headline-md text-body-md font-bold truncate text-[#5d4037]">
+                    {product.name}
+                  </h3>
+                  
+                  <p className="font-body-md mt-1 text-[#5d4037]">
+                    {Number(product.price).toLocaleString("vi-VN")}đ
+                  </p>
+                  
+                  {product.colors && product.colors.length > 0 && (
+                    <div className="flex gap-1 mt-2">
+                      {product.colors.map((color: string, cIdx: number) => (
+                        <div 
+                          key={cIdx} 
+                          className={`w-3 h-3 rounded-full border border-outline-variant ${getColorClass(color)}`}
+                          title={color}
+                        />
+                      ))}
+                    </div>
                   )}
-                </button>
-              </div>
-              
-              <h3 className="font-headline-md text-body-md font-bold truncate text-[#5d4037]">
-                {product.name}
-              </h3>
-              
-              <p className="font-body-md mt-1 text-[#5d4037]">
-                {product.price}
-              </p>
-              
-              {product.colors.length > 0 && (
-                <div className="flex gap-1 mt-2">
-                  {product.colors.map((color, cIdx) => {
-                    let colorClass = "bg-white";
-                    if (color === "Màu đen") colorClass = "bg-[#2a2a2a]";
-                    if (color === "Màu hồng") colorClass = "bg-pink-200";
-                    return (
-                      <div 
-                        key={cIdx} 
-                        className={`w-3 h-3 rounded-full border border-outline-variant ${colorClass}`}
-                        title={color}
-                      />
-                    );
-                  })}
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </main>
 
       {/* Floating Filter Button */}

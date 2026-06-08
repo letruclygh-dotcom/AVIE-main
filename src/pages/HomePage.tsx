@@ -1,7 +1,44 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "../lib/supabaseClient";
 
 export default function HomePage() {
+  const [products, setProducts] = useState<any[]>([]);
+  const [cartCount, setCartCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      // Load products
+      const { data: productsData, error: productsError } = await supabase
+        .from("products")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (productsError) {
+        console.error("Lỗi tải sản phẩm:", productsError.message);
+      } else {
+        setProducts(productsData || []);
+      }
+
+      // Load cart count
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { count, error: cartError } = await supabase
+          .from("cart_items")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", session.user.id);
+        if (!cartError && count !== null) {
+          setCartCount(count);
+        }
+      }
+      setLoading(false);
+    }
+
+    loadData();
+  }, []);
+
   useEffect(() => {
     const cards = document.querySelectorAll(".group");
     const touchHandlers: Array<{
@@ -18,20 +55,13 @@ export default function HomePage() {
       touchHandlers.push({ el: card, touchstart, touchend });
     });
 
-    const searchBtn = document.querySelector('[data-icon="search"]')?.parentElement;
-    const onSearchClick = () => {
-      console.log("Search interface overlay triggered");
-    };
-    searchBtn?.addEventListener("click", onSearchClick);
-
     return () => {
       touchHandlers.forEach(({ el, touchstart, touchend }) => {
         el.removeEventListener("touchstart", touchstart);
         el.removeEventListener("touchend", touchend);
       });
-      searchBtn?.removeEventListener("click", onSearchClick);
     };
-  }, []);
+  }, [products]);
 
   return (
     <div className="bg-background text-on-background min-h-screen pb-24">
@@ -60,9 +90,11 @@ export default function HomePage() {
             <span className="material-symbols-outlined" data-icon="shopping_bag">
               shopping_bag
             </span>
-            <span className="absolute -top-1 -right-1 bg-secondary text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-              2
-            </span>
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-secondary text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                {cartCount}
+              </span>
+            )}
           </Link>
         </div>
       </header>
@@ -128,80 +160,47 @@ export default function HomePage() {
               Sản phẩm nổi bật
             </h2>
             <div className="flex gap-2">
-              <button
-                type="button"
+              <Link
+                to="/bo-loc"
                 className="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center"
               >
                 <span className="material-symbols-outlined text-[18px]">tune</span>
-              </button>
+              </Link>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-x-3 gap-y-8">
-            {/* Product 1 */}
-            <Link className="group cursor-pointer block" to="/san-pham/ao-banh-mi">
-              <div className="aspect-[3/4] bg-surface-container overflow-hidden rounded mb-3 relative">
-                <img
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  data-alt="A minimalist high-quality lifestyle photograph of a classic white cotton t-shirt with a vintage-inspired 'Banh Mi' illustration on the chest."
-                  src="https://i.ibb.co/PG3p6wTs/6.png"
-                />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-beVietnamPro text-[14px] font-bold text-primary leading-tight">
-                  Áo Thun Unisex - 100% COTTON - “Bánh Mì”
-                </h3>
-                <p className="font-beVietnamPro text-[14px] text-secondary font-bold">225.000đ</p>
-              </div>
-            </Link>
-            {/* Product 2 */}
-            <Link className="group cursor-pointer block" to="/san-pham/ao-non-la">
-              <div className="aspect-[3/4] bg-surface-container overflow-hidden rounded mb-3 relative">
-                <img
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  data-alt="A premium flat lay of a cream-colored organic cotton t-shirt featuring a subtle linear graphic of a Vietnamese 'Non La' hat."
-                  src="https://i.ibb.co/zhP9w9gz/10.png"
-                />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-beVietnamPro text-[14px] font-bold text-primary leading-tight">
-                  {'Áo Thun Unisex  - 100% COTTON - "Nón Lá"'}
-                </h3>
-                <p className="font-beVietnamPro text-[14px] text-secondary font-bold">225.000đ</p>
-              </div>
-            </Link>
-            {/* Product 3 */}
-            <Link className="group cursor-pointer block" to="/san-pham/ao-doc-lap">
-              <div className="aspect-[3/4] bg-surface-container overflow-hidden rounded mb-3 relative">
-                <img
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  data-alt="A high-end canvas tote bag displayed in a minimalist boutique setting."
-                  src="https://i.ibb.co/hxBR2WM3/3.png"
-                />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-beVietnamPro text-[14px] font-bold text-primary leading-tight">
-                  Áo Thun Unisex - 100% Cotton - “Độc Lập”
-                </h3>
-                <p className="font-beVietnamPro text-[14px] text-secondary font-bold">225.000đ</p>
-              </div>
-            </Link>
-            {/* Product 4 */}
-            <Link className="group cursor-pointer block" to="/thanh-toan">
-              <div className="aspect-[3/4] bg-surface-container overflow-hidden rounded mb-3 relative">
-                <img
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  data-alt="Close-up shot of a minimalist tote bag with a stylized line drawing of the Turtle Tower in Hanoi."
-                  src="https://i.ibb.co/nsFs3RHn/13.png"
-                />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-beVietnamPro text-[14px] font-bold text-primary leading-tight">
-                  Túi Tote Canvas In Hình Hạ Long Bay
-                </h3>
-                <p className="font-beVietnamPro text-[14px] text-secondary font-bold">59.000đ</p>
-              </div>
-            </Link>
-          </div>
+
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <span className="animate-spin material-symbols-outlined text-3xl text-primary">progress_activity</span>
+            </div>
+          ) : products.length === 0 ? (
+            <p className="text-center text-on-surface-variant py-12">Chưa có sản phẩm nào nổi bật.</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-x-3 gap-y-8">
+              {products.map((prod) => {
+                const img = prod.image_urls && prod.image_urls.length > 0 ? prod.image_urls[0] : "https://placehold.co/300x400?text=AoVie";
+                return (
+                  <Link key={prod.id} className="group cursor-pointer block" to={`/san-pham/${prod.slug}`}>
+                    <div className="aspect-[3/4] bg-surface-container overflow-hidden rounded mb-3 relative">
+                      <img
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        alt={prod.name}
+                        src={img}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="font-beVietnamPro text-[14px] font-bold text-primary leading-tight line-clamp-2">
+                        {prod.name}
+                      </h3>
+                      <p className="font-beVietnamPro text-[14px] text-secondary font-bold">
+                        {Number(prod.price).toLocaleString("vi-VN")}đ
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </section>
 
         {/* Câu chuyện thương hiệu */}

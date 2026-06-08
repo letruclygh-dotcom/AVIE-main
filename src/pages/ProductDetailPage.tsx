@@ -1,32 +1,56 @@
-import { useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useRef, useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import SizeChartModal from "../components/SizeChartModal";
+import { supabase } from "../lib/supabaseClient";
 
-const IMAGES = [
-  {
-    src: "https://lh3.googleusercontent.com/aida-public/AB6AXuAohwbHi7p9B2Z6JhEzwH4hmrR1doKFOY0x6bO4hE8qox3oS-IRUvcHXu8OchG5Ru-RahHE6LXbAfXZ7QJTMUN9CA_4bqHULnwX2raGfWzS0cYTlp4m5En6iN0VKKGGIxm72kaM2IlDWtmzeuvjLRm9NTLTf59nDUnXyrycNZKGVsr4KUtuHeVsf-13AZgKe7cZ21oP46OaJ5jLukTd59PjOM8LXDhGk5HO0PB6EhSn3GFarp81rG-lWeePT3u7ahkz_CFJKE0F1Ptp_s8",
-    alt: "Áo Thun Unisex - Bánh Mì - Đen",
-  },
-  {
-    src: "https://lh3.googleusercontent.com/aida-public/AB6AXuCiN97XrQ9jFicK72BXiDCImDNO_Ti-BFZKiFG1rk3Tq6mBK7yqErgI0gY4vEgHkqu7SvJ_7bXqBOuUErCMkjZ6o5AmrvP4f240mSssJF_lK9sxSOosgQfGez3lM8vU-7IoUb24zzshTFwYdu01uwo3TMdwiApXbLxTCsaoCfKsr-R-ePT3j7aWAvNDJQcncHrzxE-yCJvQ71jSvJZAIVyWb12pO9NWE-sV8igbl-Rwca822NVzyQgjrLVyRbIOmCQ0clfrZYawjXnOgTQ",
-    alt: "Áo Thun Unisex - Bánh Mì - Trắng",
-  },
-];
-
-const COLORS = [
-  { id: "den", label: "Đen", className: "bg-black" },
-  { id: "trang", label: "Trắng", className: "bg-white" },
-];
-
-const SIZES = ["S", "M", "L", "XL"];
+const getColorClass = (colorLabel: string) => {
+  const map: Record<string, string> = {
+    "Đen": "bg-black",
+    "Trắng": "bg-white border border-outline-variant",
+    "Hồng": "bg-pink-400",
+    "Kem": "bg-amber-100",
+    "Đen Than": "bg-zinc-800",
+    "Đỏ": "bg-red-600",
+    "Xanh": "bg-blue-600",
+  };
+  return map[colorLabel] || "bg-gray-300";
+};
 
 export default function ProductDetailPage() {
+  const { slug } = useParams();
   const navigate = useNavigate();
   const galleryRef = useRef<HTMLDivElement>(null);
   const [activeImage, setActiveImage] = useState(0);
-  const [selectedColor, setSelectedColor] = useState("den");
-  const [selectedSize, setSelectedSize] = useState("S");
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedSize, setSelectedSize] = useState("");
   const [showSizeChart, setShowSizeChart] = useState(false);
+  const [addingToCart, setAddingToCart] = useState(false);
+
+  useEffect(() => {
+    async function fetchProduct() {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("slug", slug)
+        .single();
+      if (error) {
+        console.error("Lỗi fetch sản phẩm:", error.message);
+      } else {
+        setProduct(data);
+        if (data.colors && data.colors.length > 0) {
+          setSelectedColor(data.colors[0]);
+        }
+        if (data.sizes && data.sizes.length > 0) {
+          setSelectedSize(data.sizes[0]);
+        }
+      }
+      setLoading(false);
+    }
+    fetchProduct();
+  }, [slug]);
 
   const handleGalleryScroll = () => {
     const el = galleryRef.current;
@@ -42,9 +66,82 @@ export default function ProductDetailPage() {
     setActiveImage(index);
   };
 
-  const handleAddToCart = () => {
-    navigate("/thanh-toan");
+  const handleAddToCart = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      alert("Vui lòng đăng nhập để thực hiện mua hàng!");
+      navigate("/dang-nhap");
+      return;
+    }
+
+    if (!product) return;
+
+    if (product.stock <= 0) {
+      alert("Sản phẩm đã hết hàng trong kho!");
+      return;
+    }
+
+    setAddingToCart(true);
+    try {
+      // Check existing item in database cart
+      const { data: existing } = await supabase
+        .from("cart_items")
+        .select("*")
+        .eq("user_id", session.user.id)
+        .eq("product_id", product.id)
+        .eq("color", selectedColor)
+        .eq("size", selectedSize)
+        .maybeSingle();
+
+      if (existing) {
+        const newQty = existing.quantity + 1;
+        if (newQty > product.stock) {
+          alert(`Không thể thêm! Chỉ còn ${product.stock} sản phẩm trong kho.`);
+          setAddingToCart(false);
+          return;
+        }
+        await supabase
+          .from("cart_items")
+          .update({ quantity: newQty })
+          .eq("id", existing.id);
+      } else {
+        await supabase
+          .from("cart_items")
+          .insert({
+            user_id: session.user.id,
+            product_id: product.id,
+            quantity: 1,
+            color: selectedColor,
+            size: selectedSize,
+          });
+      }
+
+      navigate("/thanh-toan");
+    } catch (err: any) {
+      alert("Lỗi thêm vào giỏ hàng: " + err.message);
+    } finally {
+      setAddingToCart(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="bg-background text-on-surface min-h-screen flex items-center justify-center">
+        <span className="animate-spin material-symbols-outlined text-4xl text-primary">progress_activity</span>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="bg-background text-on-surface min-h-screen flex flex-col items-center justify-center gap-4">
+        <p className="font-body-lg text-body-lg text-on-surface-variant">Không tìm thấy sản phẩm này.</p>
+        <Link to="/trang-chu" className="text-primary hover:underline">Về trang chủ</Link>
+      </div>
+    );
+  }
+
+  const images = product.image_urls && product.image_urls.length > 0 ? product.image_urls : ["https://placehold.co/600x800?text=AoVie"];
 
   return (
     <div className="bg-background text-on-surface selection:bg-primary-fixed-dim font-body-md text-body-md min-h-screen pb-24">
@@ -79,35 +176,37 @@ export default function ProductDetailPage() {
             onScroll={handleGalleryScroll}
             className="overflow-x-auto snap-x snap-mandatory hide-scrollbar flex aspect-[3/4] md:aspect-square"
           >
-            {IMAGES.map((image, index) => (
+            {images.map((imgUrl: string, index: number) => (
               <div key={index} className="snap-center shrink-0 w-full">
                 <img
-                  alt={image.alt}
+                  alt={product.name}
                   className="w-full h-full object-cover"
-                  src={image.src}
+                  src={imgUrl}
                 />
               </div>
             ))}
           </div>
 
           {/* Image Indicator */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-            {IMAGES.map((_, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={() => scrollToImage(index)}
-                className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                  activeImage === index ? "bg-primary" : "bg-outline-variant"
-                }`}
-                aria-label={`Ảnh ${index + 1}`}
-              />
-            ))}
-          </div>
+          {images.length > 1 && (
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+              {images.map((_: any, index: number) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => scrollToImage(index)}
+                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                    activeImage === index ? "bg-primary" : "bg-outline-variant"
+                  }`}
+                  aria-label={`Ảnh ${index + 1}`}
+                />
+              ))}
+            </div>
+          )}
 
-          {/* New tag */}
+          {/* Stock tag */}
           <div className="absolute top-4 left-4 bg-tertiary text-on-tertiary px-3 py-1 font-label-md text-label-md uppercase tracking-wider">
-            Mới
+            {product.stock > 0 ? `Còn lại: ${product.stock}` : "Hết hàng"}
           </div>
         </div>
 
@@ -115,13 +214,17 @@ export default function ProductDetailPage() {
         <section className="px-container-padding md:max-w-xl py-6 space-y-4">
           <div className="space-y-2">
             <h2 className="font-headline-lg text-headline-lg text-primary uppercase">
-              Áo Thun Unisex - &quot;bánh mì&quot;
+              {product.name}
             </h2>
             <div className="flex items-baseline gap-4">
-              <p className="font-headline-md text-headline-md text-secondary">225.000đ</p>
-              <span className="font-label-md text-label-md text-on-surface-variant line-through">
-                295.000đ
-              </span>
+              <p className="font-headline-md text-headline-md text-secondary">
+                {Number(product.price).toLocaleString("vi-VN")}đ
+              </p>
+              {product.original_price && Number(product.original_price) > Number(product.price) && (
+                <span className="font-label-md text-label-md text-on-surface-variant line-through">
+                  {Number(product.original_price).toLocaleString("vi-VN")}đ
+                </span>
+              )}
             </div>
           </div>
 
@@ -129,71 +232,74 @@ export default function ProductDetailPage() {
 
           {/* Options */}
           <div className="space-y-6">
-            <div>
-              <label className="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest block mb-3">
-                Màu sắc
-              </label>
-              <div className="flex gap-3">
-                {COLORS.map((color) => {
-                  const isSelected = selectedColor === color.id;
-                  return (
-                    <button
-                      key={color.id}
-                      type="button"
-                      onClick={() => {
-                        setSelectedColor(color.id);
-                        scrollToImage(color.id === "den" ? 0 : 1);
-                      }}
-                      className={`group flex flex-col items-center gap-1 transition-opacity ${
-                        isSelected ? "" : "opacity-50 hover:opacity-100"
-                      }`}
-                    >
-                      <div
-                        className={`w-8 h-8 rounded-full ${color.className} ring-1 ring-offset-2 ${
-                          isSelected ? "ring-primary" : "ring-outline-variant"
-                        }`}
-                      />
-                      <span className="font-label-md text-label-md">{color.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between items-center mb-3">
-                <label className="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">
-                  Kích cỡ
+            {product.colors && product.colors.length > 0 && (
+              <div>
+                <label className="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest block mb-3">
+                  Màu sắc
                 </label>
-                <button
-                  type="button"
-                  onClick={() => setShowSizeChart(true)}
-                  className="text-secondary font-label-md text-label-md flex items-center gap-1"
-                >
-                  <span className="material-symbols-outlined text-[16px]">straighten</span>
-                  Bảng size
-                </button>
+                <div className="flex gap-3">
+                  {product.colors.map((color: string) => {
+                    const isSelected = selectedColor === color;
+                    return (
+                      <button
+                        key={color}
+                        type="button"
+                        onClick={() => {
+                          setSelectedColor(color);
+                        }}
+                        className={`group flex flex-col items-center gap-1 transition-opacity ${
+                          isSelected ? "" : "opacity-50 hover:opacity-100"
+                        }`}
+                      >
+                        <div
+                          className={`w-8 h-8 rounded-full ${getColorClass(color)} ring-1 ring-offset-2 ${
+                            isSelected ? "ring-primary" : "ring-outline-variant"
+                          }`}
+                        />
+                        <span className="font-label-md text-label-md">{color}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="grid grid-cols-4 gap-2">
-                {SIZES.map((size) => {
-                  const isSelected = selectedSize === size;
-                  return (
-                    <button
-                      key={size}
-                      type="button"
-                      onClick={() => setSelectedSize(size)}
-                      className={`border py-3 font-label-md text-label-md transition-colors ${
-                        isSelected
-                          ? "border-primary text-primary bg-primary-fixed-dim"
-                          : "border-outline-variant hover:border-primary"
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  );
-                })}
+            )}
+
+            {product.sizes && product.sizes.length > 0 && (
+              <div>
+                <div className="flex justify-between items-center mb-3">
+                  <label className="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">
+                    Kích cỡ
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowSizeChart(true)}
+                    className="text-secondary font-label-md text-label-md flex items-center gap-1"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">straighten</span>
+                    Bảng size
+                  </button>
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {product.sizes.map((size: string) => {
+                    const isSelected = selectedSize === size;
+                    return (
+                      <button
+                        key={size}
+                        type="button"
+                        onClick={() => setSelectedSize(size)}
+                        className={`border py-3 font-label-md text-label-md transition-colors ${
+                          isSelected
+                            ? "border-primary text-primary bg-primary-fixed-dim"
+                            : "border-outline-variant hover:border-primary"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Action */}
@@ -201,9 +307,10 @@ export default function ProductDetailPage() {
             <button
               type="button"
               onClick={handleAddToCart}
-              className="w-full bg-primary text-on-primary py-4 font-label-md text-label-md uppercase tracking-[0.2em] rounded-lg shadow-lg shadow-primary/10 active:scale-[0.98] transition-transform"
+              disabled={addingToCart || product.stock <= 0}
+              className="w-full bg-primary text-on-primary py-4 font-label-md text-label-md uppercase tracking-[0.2em] rounded-lg shadow-lg shadow-primary/10 active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Thêm vào giỏ hàng
+              {addingToCart ? "Đang xử lý..." : product.stock > 0 ? "Thêm vào giỏ hàng" : "Hết hàng"}
             </button>
             <div className="flex items-center justify-center gap-2 text-on-surface-variant font-label-md text-label-md">
               <span className="material-symbols-outlined text-[18px]">verified</span>
@@ -230,11 +337,8 @@ export default function ProductDetailPage() {
             </button>
           </div>
 
-          <div className="font-body-md text-body-md text-on-surface-variant space-y-2">
-            <p>– Chất liệu: 100% Cotton 2 chiều, định lượng 250gsm, dày dặn, đứng form.</p>
-            <p>– Hình in: Công nghệ in lụa cao cấp, bền màu, không bong tróc.</p>
-            <p>– Kiểu dáng: Boxy/Oversize unisex phù hợp cho cả nam và nữ.</p>
-            <p>– Xuất xứ: Tự hào sản xuất tại Việt Nam bởi đội ngũ AOVIE.</p>
+          <div className="font-body-md text-body-md text-on-surface-variant whitespace-pre-line leading-relaxed">
+            {product.description || "Chưa có mô tả cho sản phẩm này."}
           </div>
           <button
             type="button"

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import GrainTexture from "../components/GrainTexture";
 
 export default function SuccessPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMounted, setIsMounted] = useState(false);
+  const orderCode = location.state?.orderCode || "AV12345";
 
   // Trigger entrance animations
   useEffect(() => {
@@ -79,7 +81,7 @@ export default function SuccessPage() {
           </p>
           <div className="inline-block py-2 px-6 bg-surface-container border border-outline-variant rounded-full">
             <span className="font-label-md text-label-md text-secondary opacity-80 mr-2 uppercase">Mã đơn hàng:</span>
-            <span className="font-label-md text-label-md text-primary font-bold">#AV12345</span>
+            <span className="font-label-md text-label-md text-primary font-bold">#{orderCode}</span>
           </div>
         </div>
 
@@ -92,7 +94,7 @@ export default function SuccessPage() {
         >
           <button
             type="button"
-            onClick={() => alert("Đang định vị mã đơn hàng #AV12345...")}
+            onClick={() => navigate("/don-hang")}
             className="w-full py-4 bg-secondary text-white font-label-md text-label-md uppercase tracking-widest rounded transition-all hover:bg-secondary/95 active:scale-95 shadow-sm font-semibold"
           >
             Theo dõi đơn hàng

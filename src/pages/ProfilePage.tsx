@@ -1,18 +1,29 @@
 import { useNavigate } from "react-router-dom";
 import GrainTexture from "../components/GrainTexture";
+import { useAuth } from "../hooks/useAuth";
 
 export default function ProfilePage() {
   const navigate = useNavigate();
+  const { user, profile, loading, logout } = useAuth();
 
   const handleBottomNav = (path: string) => {
     navigate(path);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (window.confirm("Bạn có chắc chắn muốn đăng xuất khỏi tài khoản AoVie?")) {
+      await logout();
       navigate("/dang-nhap");
     }
   };
+
+  if (loading) {
+    return (
+      <div className="bg-background text-on-surface min-h-screen flex items-center justify-center">
+        <span className="animate-spin material-symbols-outlined text-4xl text-primary">progress_activity</span>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-background text-on-surface min-h-screen flex flex-col font-sans relative antialiased select-none">
@@ -47,23 +58,48 @@ export default function ProfilePage() {
         <section className="bg-surface border border-outline-variant p-5 rounded-lg flex items-center gap-4 mt-2 shadow-xs">
           {/* Avatar frame */}
           <div className="w-16 h-16 rounded-full border-2 border-secondary overflow-hidden shrink-0 bg-surface-container flex items-center justify-center">
-            <img
-              className="w-full h-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmcQLLBc9IUdGbgELw-Nrt73xEwIxwER6R2B3tJUNget63iEy0thGJt5UCCv9q-9Tha8NWXDhs2ERfYMPtuANAb2Ro2Zo5ocp_mKin2808Blh1Uknriax8Kv_a5fBo22UYNZdFlVP-DKvhUvp0nIUbuesbuOFZKPnCd2fmcS3yWGWroMXIr36x4VPjBvMA8YFmNWb5H4l8Of84EeY5swiSqGujAcDmgYq2hS_Fa7KOZV88oPHyDzriCdjjLf2_uko34VsoJVMoAYMxbw"
-              alt="Helen Chen Avatar"
-            />
+            {user ? (
+              <img
+                className="w-full h-full object-cover"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmcQLLBc9IUdGbgELw-Nrt73xEwIxwER6R2B3tJUNget63iEy0thGJt5UCCv9q-9Tha8NWXDhs2ERfYMPtuANAb2Ro2Zo5ocp_mKin2808Blh1Uknriax8Kv_a5fBo22UYNZdFlVP-DKvhUvp0nIUbuesbuOFZKPnCd2fmcS3yWGWroMXIr36x4VPjBvMA8YFmNWb5H4l8Of84EeY5swiSqGujAcDmgYq2hS_Fa7KOZV88oPHyDzriCdjjLf2_uko34VsoJVMoAYMxbw"
+                alt="Avatar"
+              />
+            ) : (
+              <span className="material-symbols-outlined text-[40px] text-outline">account_circle</span>
+            )}
           </div>
 
           {/* User Meta */}
           <div className="flex-grow">
-            <div className="flex items-center gap-2">
-              <h2 className="font-headline-md text-primary text-[18px] font-bold leading-tight">Helen Chen</h2>
-              <span className="bg-secondary-fixed text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded-full uppercase shrink-0">
-                Gold
-              </span>
-            </div>
-            <p className="font-label-md text-label-md text-on-surface-variant mt-1">0938752999</p>
-            <p className="font-label-md text-label-md text-on-surface-variant text-[11px]">helen.chen@gmail.com</p>
+            {user ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <h2 className="font-headline-md text-primary text-[18px] font-bold leading-tight">
+                    {profile?.full_name || "Thành viên AoVie"}
+                  </h2>
+                  <span className="bg-secondary-fixed text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded-full uppercase shrink-0">
+                    {profile?.role === "admin" ? "Admin" : "Member"}
+                  </h2>
+                </div>
+                <p className="font-label-md text-label-md text-on-surface-variant mt-1">
+                  {profile?.phone || "Chưa cập nhật SĐT"}
+                </p>
+                <p className="font-label-md text-label-md text-on-surface-variant text-[11px]">{user.email}</p>
+              </>
+            ) : (
+              <>
+                <h2 className="font-headline-md text-primary text-[18px] font-bold leading-tight">Khách</h2>
+                <p className="font-label-md text-label-md text-on-surface-variant mt-1">
+                  Đăng nhập để đặt hàng & theo dõi đơn hàng
+                </p>
+                <button
+                  onClick={() => navigate("/dang-nhap")}
+                  className="mt-2 text-xs bg-secondary text-on-secondary px-3 py-1 rounded font-bold uppercase tracking-wider"
+                >
+                  Đăng nhập
+                </button>
+              </>
+            )}
           </div>
         </section>
 
@@ -197,19 +233,34 @@ export default function ProfilePage() {
 
 
 
-            {/* Logout */}
-            <button
-              onClick={handleLogout}
-              className="flex items-center justify-between p-4 hover:bg-error-container/30 transition-colors text-left group"
-            >
-              <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-error text-[22px]">logout</span>
-                <span className="font-body-md text-body-md font-bold text-error uppercase tracking-wide text-xs group-hover:underline">
-                  Đăng xuất
-                </span>
-              </div>
-              <span className="material-symbols-outlined text-error opacity-70 text-[20px]">chevron_right</span>
-            </button>
+            {/* Logout / Login */}
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="flex items-center justify-between p-4 hover:bg-error-container/30 transition-colors text-left group"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="material-symbols-outlined text-error text-[22px]">logout</span>
+                  <span className="font-body-md text-body-md font-bold text-error uppercase tracking-wide text-xs group-hover:underline">
+                    Đăng xuất
+                  </span>
+                </div>
+                <span className="material-symbols-outlined text-error opacity-70 text-[20px]">chevron_right</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate("/dang-nhap")}
+                className="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors text-left group"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="material-symbols-outlined text-primary text-[22px]">login</span>
+                  <span className="font-body-md text-body-md font-bold text-primary uppercase tracking-wide text-xs group-hover:underline">
+                    Đăng nhập tài khoản
+                  </span>
+                </div>
+                <span className="material-symbols-outlined text-primary opacity-70 text-[20px]">chevron_right</span>
+              </button>
+            )}
           </div>
         </section>
       </main>

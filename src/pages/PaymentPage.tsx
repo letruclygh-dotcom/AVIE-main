@@ -1,36 +1,197 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import GrainTexture from "../components/GrainTexture";
+import { useAuth } from "../hooks/useAuth";
+import { supabase } from "../lib/supabaseClient";
 
 type ShippingMethod = "standard";
-type PaymentMethod = "cod" | "bank" | "wallet";
+type PaymentMethod = "cod" | "payos";
 
 export default function PaymentPage() {
   const navigate = useNavigate();
-  const [recipientName, setRecipientName] = useState("Helen Chen");
-  const [recipientPhone, setRecipientPhone] = useState("0938752999");
-  const [shippingAddress, setShippingAddress] = useState(
-    "Số 45, Đường Lê Lợi, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh"
-  );
+  const { user, profile, loading: authLoading } = useAuth();
+  
+  // States cho Form
+  const [recipientName, setRecipientName] = useState("");
+  const [recipientPhone, setRecipientPhone] = useState("");
+  const [shippingAddress, setShippingAddress] = useState("");
   const [shippingMethod, setShippingMethod] = useState<ShippingMethod>("standard");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
+  
+  // States cho Giỏ hàng
+  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [cartLoading, setCartLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
-
-  // Focus styles helper
   const [activeInput, setActiveInput] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // 1. Check Auth & Load profile data
+  useEffect(() => {
+    if (!authLoading) {
+      if (!user) {
+        alert("Vui lòng đăng nhập để thực hiện thanh toán!");
+        navigate("/dang-nhap");
+        return;
+      }
+      setRecipientName(profile?.full_name || "");
+      setRecipientPhone(profile?.phone || "");
+      
+      // Load address mặc định của user nếu có
+      loadDefaultAddress();
+      // Load giỏ hàng
+      loadCartItems();
+    }
+  }, [user, authLoading, profile]);
+
+  const loadDefaultAddress = async () => {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from("addresses")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("is_default", true)
+      .maybeSingle();
+    
+    if (!error && data) {
+      setShippingAddress(data.address_detail);
+    }
+  };
+
+  const loadCartItems = async () => {
+    if (!user) return;
+    setCartLoading(true);
+    const { data, error } = await supabase
+      .from("cart_items")
+      .select("*, products(*)")
+      .eq("user_id", user.id);
+    
+    if (error) {
+      console.error("Lỗi load giỏ hàng:", error.message);
+    } else {
+      setCartItems(data || []);
+    }
+    setCartLoading(false);
+  };
+
+  // 2. Logic tăng giảm xóa giỏ hàng
+  const handleUpdateQuantity = async (itemId: string, currentQty: number, change: number, stock: number) => {
+    const newQty = currentQty + change;
+    if (newQty <= 0) {
+      // Xoá item
+      handleDeleteItem(itemId);
+      return;
+    }
+    if (newQty > stock) {
+      alert(`Không thể tăng! Chỉ còn ${stock} sản phẩm trong kho.`);
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("cart_items")
+        .update({ quantity: newQty })
+        .eq("id", itemId);
+      
+      if (error) {
+        alert("Không thể cập nhật số lượng: " + error.message);
+      } else {
+        // Cập nhật state local
+        setCartItems((prev) =>
+          prev.map((item) => (item.id === itemId ? { ...item, quantity: newQty } : item))
+        );
+      }
+    } catch (err: any) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteItem = async (itemId: string) => {
+    if (window.confirm("Bạn có chắc muốn xoá sản phẩm này khỏi giỏ hàng?")) {
+      const { error } = await supabase
+        .from("cart_items")
+        .delete()
+        .eq("id", itemId);
+      
+      if (error) {
+        alert("Lỗi khi xoá sản phẩm: " + error.message);
+      } else {
+        setCartItems((prev) => prev.filter((item) => item.id !== itemId));
+      }
+    }
+  };
+
+  // 3. Tính tổng tiền
+  const subtotal = cartItems.reduce((acc, item) => {
+    const price = item.products ? Number(item.products.price) : 0;
+    return acc + price * item.quantity;
+  }, 0);
+
+  const shippingFee = cartItems.length > 0 ? 30000 : 0;
+  const total = subtotal + shippingFee;
+
+  // 4. Submit đặt hàng
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (cartItems.length === 0) {
+      alert("Giỏ hàng của bạn đang trống!");
+      return;
+    }
+
+    if (paymentMethod === "payos") {
+      alert("Cổng thanh toán payOS đang được phát triển ở Phần 9! Vui lòng chọn COD để tiếp tục test.");
+      return;
+    }
+
     setIsProcessing(true);
 
-    setTimeout(() => {
-      alert(
-        "Cảm ơn bạn đã đặt hàng! AoVie sẽ liên hệ sớm nhất để xác nhận đơn hàng."
-      );
+    try {
+      // Lấy session token hiện tại của user để gửi lên API server-side
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        alert("Phiên đăng nhập đã hết hạn! Vui lòng đăng nhập lại.");
+        navigate("/dang-nhap");
+        return;
+      }
+
+      // Gọi API Vercel Serverless Function
+      const response = await fetch("/api/orders/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({
+          recipientName,
+          recipientPhone,
+          shippingAddress,
+          shippingMethod,
+          paymentMethod
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Đã xảy ra lỗi khi tạo đơn hàng.");
+      }
+
+      // Đặt hàng thành công
       setIsProcessing(false);
-      navigate("/dat-hang-thanh-cong");
-    }, 1500);
+      // Chuyển hướng sang trang thành công kèm theo orderCode
+      navigate("/dat-hang-thanh-cong", { state: { orderCode: result.orderCode } });
+
+    } catch (err: any) {
+      alert("Đặt hàng thất bại: " + err.message);
+      setIsProcessing(false);
+    }
   };
+
+  if (authLoading || cartLoading) {
+    return (
+      <div className="bg-background text-on-surface min-h-screen flex items-center justify-center">
+        <span className="animate-spin material-symbols-outlined text-4xl text-primary">progress_activity</span>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-background text-on-surface selection:bg-secondary-container selection:text-on-secondary-container min-h-screen pb-32 font-sans relative antialiased select-none">
@@ -51,7 +212,7 @@ export default function PaymentPage() {
           </h1>
           <button
             type="button"
-            onClick={() => alert("Giỏ hàng đang được tải...")}
+            onClick={() => navigate("/danh-muc")}
             className="hover:opacity-80 transition-opacity active:scale-95 w-10 h-10 flex items-center justify-center"
           >
             <span className="material-symbols-outlined text-primary">shopping_bag</span>
@@ -75,6 +236,80 @@ export default function PaymentPage() {
             Hoàn tất
           </span>
         </div>
+
+        {/* Section 0: Giỏ hàng chi tiết */}
+        <section className="mb-8">
+          <h2 className="font-headline-md text-headline-md mb-4 flex items-center gap-3 text-primary">
+            <span className="material-symbols-outlined">shopping_cart</span>
+            Sản phẩm đã chọn
+          </h2>
+          
+          {cartItems.length === 0 ? (
+            <div className="p-6 bg-surface-container rounded-xl border border-outline-variant text-center">
+              <p className="text-on-surface-variant mb-4">Giỏ hàng của bạn đang trống.</p>
+              <button
+                type="button"
+                onClick={() => navigate("/danh-muc")}
+                className="bg-primary text-white px-6 py-2 rounded text-xs font-bold uppercase tracking-wider"
+              >
+                Mua sắm ngay
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {cartItems.map((item) => {
+                const product = item.products;
+                if (!product) return null;
+                const img = product.image_urls && product.image_urls.length > 0 ? product.image_urls[0] : "https://placehold.co/150x200?text=AoVie";
+                
+                return (
+                  <div key={item.id} className="flex gap-4 p-4 bg-surface-container rounded-xl border border-outline-variant items-center">
+                    <img src={img} alt={product.name} className="w-16 h-20 object-cover rounded border border-outline-variant" />
+                    
+                    <div className="flex-grow">
+                      <h3 className="font-body-md font-bold text-on-surface line-clamp-1">{product.name}</h3>
+                      <p className="text-xs text-on-surface-variant mt-1">
+                        Màu: {item.color || "Mặc định"} | Size: {item.size || "Mặc định"}
+                      </p>
+                      <p className="text-sm text-secondary font-bold mt-1">
+                        {Number(product.price).toLocaleString("vi-VN")}đ
+                      </p>
+                    </div>
+
+                    {/* Bộ chỉnh số lượng */}
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="flex items-center border border-outline-variant rounded bg-surface">
+                        <button
+                          type="button"
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity, -1, product.stock)}
+                          className="w-8 h-8 flex items-center justify-center text-primary font-bold hover:bg-surface-container-low transition-colors"
+                        >
+                          -
+                        </button>
+                        <span className="px-2 text-sm font-bold">{item.quantity}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity, 1, product.stock)}
+                          className="w-8 h-8 flex items-center justify-center text-primary font-bold hover:bg-surface-container-low transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteItem(item.id)}
+                        className="text-error hover:underline text-xs flex items-center gap-1 mt-1"
+                      >
+                        <span className="material-symbols-outlined !text-[14px]">delete</span>
+                        Xoá
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
 
         <form onSubmit={handleSubmit} className="space-y-section-gap">
           {/* Section 1: Thông tin người nhận */}
@@ -132,13 +367,6 @@ export default function PaymentPage() {
                 <span className="material-symbols-outlined">distance</span>
                 Địa chỉ giao hàng
               </h2>
-              <button
-                type="button"
-                onClick={() => navigate("/them-dia-chi-moi")}
-                className="font-label-md text-label-md text-secondary uppercase tracking-wider hover:underline"
-              >
-                + Thêm mới
-              </button>
             </div>
             <div className="relative">
               <label
@@ -215,26 +443,13 @@ export default function PaymentPage() {
                 <input
                   type="radio"
                   name="payment"
-                  value="bank"
-                  checked={paymentMethod === "bank"}
-                  onChange={() => setPaymentMethod("bank")}
+                  value="payos"
+                  checked={paymentMethod === "payos"}
+                  onChange={() => setPaymentMethod("payos")}
                   className="w-5 h-5 text-secondary bg-surface border-outline-variant focus:ring-secondary focus:ring-offset-background"
                 />
                 <span className="font-body-md text-body-md uppercase tracking-wide text-on-surface font-sans">
-                  Chuyển khoản ngân hàng
-                </span>
-              </label>
-              <label className="flex items-center gap-4 p-5 bg-surface-container-low border border-outline-variant rounded-xl hover:bg-surface-container transition-colors cursor-pointer group">
-                <input
-                  type="radio"
-                  name="payment"
-                  value="wallet"
-                  checked={paymentMethod === "wallet"}
-                  onChange={() => setPaymentMethod("wallet")}
-                  className="w-5 h-5 text-secondary bg-surface border-outline-variant focus:ring-secondary focus:ring-offset-background"
-                />
-                <span className="font-body-md text-body-md uppercase tracking-wide text-on-surface font-sans">
-                  Ví điện tử (Momo/ZaloPay)
+                  Thanh toán trực tuyến (payOS)
                 </span>
               </label>
             </div>
@@ -251,7 +466,7 @@ export default function PaymentPage() {
                   Tạm tính
                 </span>
                 <span className="font-body-md text-body-md font-medium font-sans">
-                  225.000đ
+                  {subtotal.toLocaleString("vi-VN")}đ
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -259,7 +474,7 @@ export default function PaymentPage() {
                   Phí vận chuyển
                 </span>
                 <span className="font-body-md text-body-md font-medium font-sans">
-                  30.000đ
+                  {shippingFee.toLocaleString("vi-VN")}đ
                 </span>
               </div>
               <div className="flex justify-between items-center pt-4 mt-2 border-t border-outline-variant">
@@ -267,7 +482,7 @@ export default function PaymentPage() {
                   Tổng cộng
                 </span>
                 <span className="font-headline-md text-headline-md text-secondary font-sans">
-                  255.000đ
+                  {total.toLocaleString("vi-VN")}đ
                 </span>
               </div>
             </div>
@@ -277,9 +492,9 @@ export default function PaymentPage() {
           <div className="pt-4">
             <button
               type="submit"
-              disabled={isProcessing}
+              disabled={isProcessing || cartItems.length === 0}
               className={`w-full bg-primary text-on-primary py-4 rounded-xl font-label-md text-label-md uppercase tracking-[0.2em] font-bold active:scale-[0.98] transition-all shadow-xl shadow-primary/20 font-sans ${
-                isProcessing ? "opacity-70 cursor-not-allowed" : "hover:bg-on-primary-fixed-variant"
+                isProcessing || cartItems.length === 0 ? "opacity-70 cursor-not-allowed" : "hover:bg-on-primary-fixed-variant"
               }`}
             >
               {isProcessing ? "ĐANG XỬ LÝ..." : "Xác nhận đặt hàng"}
@@ -310,19 +525,13 @@ export default function PaymentPage() {
             <span className="material-symbols-outlined">grid_view</span>
             <span className="font-label-md text-[10px] mt-1 font-sans">Danh mục</span>
           </button>
-          {/* Đơn hàng (ACTIVE) */}
+          {/* Đơn hàng */}
           <button
             onClick={() => navigate("/don-hang")}
-            className="flex flex-col items-center justify-center text-secondary relative active:scale-90 w-16"
+            className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-90 w-16"
           >
-            <span
-              className="material-symbols-outlined"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              receipt_long
-            </span>
+            <span className="material-symbols-outlined">receipt_long</span>
             <span className="font-label-md text-[10px] mt-1 font-sans">Đơn hàng</span>
-            <div className="absolute -bottom-1 w-1 h-1 bg-secondary rounded-full"></div>
           </button>
           {/* Thông báo */}
           <button

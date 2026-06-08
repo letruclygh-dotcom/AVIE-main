@@ -30,17 +30,15 @@ import VouchersPage from "./pages/VouchersPage";
 import PaymentCardsPage from "./pages/PaymentCardsPage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
-import ProductDocLapPage from "./pages/ProductDocLapPage";
-import ProductNonLaPage from "./pages/ProductNonLaPage";
+import AdminPage from "./pages/AdminPage";
 
 export default function App() {
   return (
     <Routes>
+      <Route path="/admin" element={<AdminPage />} />
       <Route path="/" element={<SplashPage />} />
       <Route path="/danh-muc" element={<CategoryPage />} />
-      <Route path="/san-pham/ao-banh-mi" element={<ProductDetailPage />} />
-      <Route path="/san-pham/ao-doc-lap" element={<ProductDocLapPage />} />
-      <Route path="/san-pham/ao-non-la" element={<ProductNonLaPage />} />
+      <Route path="/san-pham/:slug" element={<ProductDetailPage />} />
       <Route path="/hub" element={<HubPage />} />
       <Route path="/gioi-thieu" element={<AboutPage />} />
       <Route path="/trang-chu" element={<HomePage />} />

@@ -1,7 +1,8 @@
 import { FormEvent, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import GrainTexture from "../components/GrainTexture";
 import RegisterHeader from "../components/RegisterHeader";
+import { supabase } from "../lib/supabaseClient";
 
 type RegisterValues = {
   full_name: string;
@@ -67,6 +68,8 @@ export default function RegisterPage() {
     return next;
   }
 
+  const navigate = useNavigate();
+
   function onSubmit(e: FormEvent) {
     e.preventDefault();
     setToast(null);
@@ -78,7 +81,28 @@ export default function RegisterPage() {
       return;
     }
 
-    setToast({ kind: "success", message: "Đăng ký thành công! Chào mừng bạn đến với AoVie." });
+    // Call Supabase Auth signUp
+    supabase.auth.signUp({
+      email: values.email.trim(),
+      password: values.password,
+      options: {
+        data: {
+          full_name: values.full_name.trim(),
+          phone: values.phone.trim(),
+        }
+      }
+    }).then(({ data, error }) => {
+      if (error) {
+        setToast({ kind: "error", message: error.message });
+      } else {
+        setToast({ kind: "success", message: "Đăng ký thành công! Đang chuyển hướng đăng nhập..." });
+        setTimeout(() => {
+          navigate("/dang-nhap");
+        }, 1500);
+      }
+    }).catch((err: any) => {
+      setToast({ kind: "error", message: err.message || "Đã xảy ra lỗi hệ thống." });
+    });
   }
 
   return (

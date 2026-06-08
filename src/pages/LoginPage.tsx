@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LoginFooter from "../components/LoginFooter";
+import { supabase } from "../lib/supabaseClient";
 
 type LoginValues = {
   username: string;
@@ -8,6 +9,7 @@ type LoginValues = {
 };
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const [values, setValues] = useState<LoginValues>({ username: "", password: "" });
   const [showPass, setShowPass] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -23,9 +25,25 @@ export default function LoginPage() {
     }
 
     setIsProcessing(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    setIsProcessing(false);
-    setMessage({ kind: "success", text: "Đăng nhập thành công." });
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: values.username.trim(),
+        password: values.password,
+      });
+
+      if (error) {
+        setMessage({ kind: "error", text: error.message });
+      } else {
+        setMessage({ kind: "success", text: "Đăng nhập thành công!" });
+        setTimeout(() => {
+          navigate("/trang-chu");
+        }, 1000);
+      }
+    } catch (err: any) {
+      setMessage({ kind: "error", text: err.message || "Đã xảy ra lỗi hệ thống." });
+    } finally {
+      setIsProcessing(false);
+    }
   }
 
   return (

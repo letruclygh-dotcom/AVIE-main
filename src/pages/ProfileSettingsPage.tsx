@@ -1,8 +1,17 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { supabase } from "../lib/supabaseClient";
 
 export default function ProfileSettingsPage() {
   const navigate = useNavigate();
+  const { user, profile, loading, logout, refreshProfile } = useAuth();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/dang-nhap");
+    }
+  }, [user, loading, navigate]);
 
   useEffect(() => {
     const items = document.querySelectorAll(".cursor-pointer");
@@ -37,7 +46,52 @@ export default function ProfileSettingsPage() {
         el.removeEventListener("mouseleave", mouseleave);
       });
     };
-  }, []);
+  }, [loading]);
+
+  const handleUpdateName = async () => {
+    const newName = window.prompt("Nhập họ tên mới của bạn:", profile?.full_name || "");
+    if (newName !== null && newName.trim() !== "") {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ full_name: newName.trim() })
+        .eq("id", user?.id);
+      if (error) {
+        alert("Lỗi khi cập nhật họ tên: " + error.message);
+      } else {
+        refreshProfile();
+      }
+    }
+  };
+
+  const handleUpdatePhone = async () => {
+    const newPhone = window.prompt("Nhập số điện thoại mới:", profile?.phone || "");
+    if (newPhone !== null && newPhone.trim() !== "") {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ phone: newPhone.trim() })
+        .eq("id", user?.id);
+      if (error) {
+        alert("Lỗi khi cập nhật số điện thoại: " + error.message);
+      } else {
+        refreshProfile();
+      }
+    }
+  };
+
+  const handleLogout = async () => {
+    if (window.confirm("Bạn có chắc chắn muốn đăng xuất khỏi tài khoản AoVie?")) {
+      await logout();
+      navigate("/dang-nhap");
+    }
+  };
+
+  if (loading || !user) {
+    return (
+      <div className="bg-background text-on-surface min-h-screen flex items-center justify-center">
+        <span className="animate-spin material-symbols-outlined text-4xl text-primary">progress_activity</span>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-background text-on-surface min-h-screen flex flex-col profile-settings">
@@ -94,8 +148,8 @@ export default function ProfileSettingsPage() {
               </span>
             </button>
           </div>
-          <h2 className="font-headline-md text-headline-md text-primary">Helen Chen</h2>
-          <p className="font-body-md text-body-md text-on-surface-variant">helen.chen@gmail.com</p>
+          <h2 className="font-headline-md text-headline-md text-primary">{profile?.full_name || "Thành viên AoVie"}</h2>
+          <p className="font-body-md text-body-md text-on-surface-variant">{user.email}</p>
         </section>
 
         {/* Settings List */}
@@ -115,33 +169,37 @@ export default function ProfileSettingsPage() {
             </div>
             <div className="divide-y divide-outline-variant">
               <div
+                onClick={handleUpdateName}
                 className="flex justify-between items-center px-gutter py-4 hover:bg-surface-container-low transition-colors cursor-pointer group"
                 style={{ transform: "scale(1)" }}
               >
                 <div className="flex flex-col">
                   <span className="font-label-md text-label-md text-on-surface-variant">Họ tên</span>
-                  <span className="font-body-md text-body-md text-on-surface font-medium">Helen Chen</span>
+                  <span className="font-body-md text-body-md text-on-surface font-medium">{profile?.full_name || "Chưa cập nhật"}</span>
                 </div>
+                <span className="material-symbols-outlined text-outline-variant text-[16px]">edit</span>
               </div>
               <div
-                className="flex justify-between items-center px-gutter py-4 hover:bg-surface-container-low transition-colors cursor-pointer group"
+                className="flex justify-between items-center px-gutter py-4 hover:bg-surface-container-low transition-colors group"
                 style={{ transform: "scale(1)" }}
               >
                 <div className="flex flex-col">
-                  <span className="font-label-md text-label-md text-on-surface-variant">Email</span>
+                  <span className="font-label-md text-label-md text-on-surface-variant">Email (Không thể thay đổi)</span>
                   <span className="font-body-md text-body-md text-on-surface font-medium">
-                    helen.chen@gmail.com
+                    {user.email}
                   </span>
                 </div>
               </div>
               <div
+                onClick={handleUpdatePhone}
                 className="flex justify-between items-center px-gutter py-4 hover:bg-surface-container-low transition-colors cursor-pointer group"
                 style={{ transform: "scale(1)" }}
               >
                 <div className="flex flex-col">
                   <span className="font-label-md text-label-md text-on-surface-variant">Số điện thoại</span>
-                  <span className="font-body-md text-body-md text-on-surface font-medium">0938752999</span>
+                  <span className="font-body-md text-body-md text-on-surface font-medium">{profile?.phone || "Chưa cập nhật"}</span>
                 </div>
+                <span className="material-symbols-outlined text-outline-variant text-[16px]">edit</span>
               </div>
             </div>
           </div>
@@ -269,6 +327,7 @@ export default function ProfileSettingsPage() {
 
           {/* Logout Button */}
           <button
+            onClick={handleLogout}
             type="button"
             className="w-full mt-8 py-4 bg-transparent border border-error text-error font-label-md text-label-md uppercase tracking-widest rounded transition-all hover:bg-error hover:text-white active:scale-95"
           >
