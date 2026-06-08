@@ -218,7 +218,7 @@ export default function OrdersPage() {
                     <div className="flex gap-2">
                       <button
                         type="button"
-                        onClick={() => navigate("/chi-tiet-don-hang", { state: { orderId: order.id } })}
+                        onClick={() => navigate(`/chi-tiet-don-hang?orderId=${order.id}`, { state: { orderId: order.id } })}
                         className="border border-primary text-primary px-3 py-1.5 rounded text-[11px] font-bold uppercase tracking-wider"
                       >
                         Chi tiết

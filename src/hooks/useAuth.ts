@@ -20,8 +20,10 @@ export function useAuth() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
+        setProfile(null);
         fetchProfile(session.user.id);
       } else {
+        setProfile(null);
         setLoading(false);
       }
     });
@@ -32,6 +34,8 @@ export function useAuth() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
+        setLoading(true);
+        setProfile(null);
         fetchProfile(session.user.id);
       } else {
         setProfile(null);
@@ -54,6 +58,7 @@ export function useAuth() {
 
       if (error) {
         console.error("Lỗi khi tải profile:", error.message);
+        setProfile(null);
       } else {
         setProfile(data);
       }

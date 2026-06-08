@@ -79,7 +79,7 @@ export default function ProfilePage() {
                   </h2>
                   <span className="bg-secondary-fixed text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded-full uppercase shrink-0">
                     {profile?.role === "admin" ? "Admin" : "Member"}
-                  </h2>
+                  </span>
                 </div>
                 <p className="font-label-md text-label-md text-on-surface-variant mt-1">
                   {profile?.phone || "Chưa cập nhật SĐT"}
