@@ -148,6 +148,16 @@ alter table public.orders enable row level security;
 alter table public.order_items enable row level security;
 alter table public.payments enable row level security;
 
+grant usage on schema public to anon, authenticated;
+grant select on public.categories to anon, authenticated;
+grant select on public.products to anon, authenticated;
+grant select, insert, update, delete on public.profiles to authenticated;
+grant select, insert, update, delete on public.addresses to authenticated;
+grant select, insert, update, delete on public.cart_items to authenticated;
+grant select, update on public.orders to authenticated;
+grant select on public.order_items to authenticated;
+grant select on public.payments to authenticated;
+
 drop policy if exists "profiles_select_own_or_admin" on public.profiles;
 create policy "profiles_select_own_or_admin"
 on public.profiles for select
