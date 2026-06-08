@@ -134,6 +134,166 @@ begin
 end;
 $$;
 
+create or replace function public.create_order_from_cart(
+  p_user_id uuid,
+  p_recipient_name text,
+  p_recipient_phone text,
+  p_shipping_address text,
+  p_shipping_method text default 'standard',
+  p_payment_method text default 'cod'
+)
+returns table (
+  order_id uuid,
+  order_code bigint,
+  subtotal numeric,
+  shipping_fee numeric,
+  total numeric
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_order_id uuid;
+  v_order_code bigint;
+  v_subtotal numeric := 0;
+  v_shipping_fee numeric := 30000;
+  v_total numeric := 0;
+  v_item record;
+begin
+  if p_user_id is null then
+    raise exception 'User is required';
+  end if;
+
+  if coalesce(trim(p_recipient_name), '') = '' then
+    raise exception 'Recipient name is required';
+  end if;
+
+  if coalesce(trim(p_recipient_phone), '') = '' then
+    raise exception 'Recipient phone is required';
+  end if;
+
+  if coalesce(trim(p_shipping_address), '') = '' then
+    raise exception 'Shipping address is required';
+  end if;
+
+  if p_payment_method not in ('cod', 'payos') then
+    raise exception 'Unsupported payment method';
+  end if;
+
+  if not exists (
+    select 1
+    from public.cart_items
+    where user_id = p_user_id
+  ) then
+    raise exception 'Cart is empty';
+  end if;
+
+  for v_item in
+    select
+      ci.id,
+      ci.product_id,
+      ci.quantity,
+      ci.color,
+      ci.size,
+      p.name as product_name,
+      p.price,
+      p.stock
+    from public.cart_items ci
+    join public.products p on p.id = ci.product_id
+    where ci.user_id = p_user_id
+    order by ci.created_at
+    for update of ci, p
+  loop
+    if v_item.stock < v_item.quantity then
+      raise exception 'Sản phẩm "%" không đủ số lượng trong kho. Chỉ còn % cái.', v_item.product_name, v_item.stock;
+    end if;
+
+    v_subtotal := v_subtotal + (v_item.price * v_item.quantity);
+  end loop;
+
+  v_total := v_subtotal + v_shipping_fee;
+  v_order_code := ((extract(epoch from clock_timestamp())::bigint % 10000000000) * 10000)
+    + floor(random() * 9000 + 1000)::bigint;
+
+  insert into public.orders (
+    user_id,
+    order_code,
+    recipient_name,
+    recipient_phone,
+    shipping_address,
+    shipping_method,
+    shipping_fee,
+    payment_method,
+    payment_status,
+    order_status,
+    subtotal,
+    total
+  )
+  values (
+    p_user_id,
+    v_order_code,
+    trim(p_recipient_name),
+    trim(p_recipient_phone),
+    trim(p_shipping_address),
+    coalesce(nullif(trim(p_shipping_method), ''), 'standard'),
+    v_shipping_fee,
+    p_payment_method,
+    'pending',
+    'pending',
+    v_subtotal,
+    v_total
+  )
+  returning id into v_order_id;
+
+  insert into public.order_items (
+    order_id,
+    product_id,
+    quantity,
+    price,
+    color,
+    size
+  )
+  select
+    v_order_id,
+    ci.product_id,
+    ci.quantity,
+    p.price,
+    ci.color,
+    ci.size
+  from public.cart_items ci
+  join public.products p on p.id = ci.product_id
+  where ci.user_id = p_user_id;
+
+  update public.products p
+  set stock = p.stock - ci.quantity
+  from public.cart_items ci
+  where ci.user_id = p_user_id
+    and p.id = ci.product_id;
+
+  insert into public.payments (
+    order_id,
+    payment_gateway,
+    amount,
+    status,
+    payos_order_code
+  )
+  values (
+    v_order_id,
+    p_payment_method,
+    v_total,
+    case when p_payment_method = 'cod' then 'pending' else 'pending' end,
+    case when p_payment_method = 'payos' then v_order_code else null end
+  );
+
+  delete from public.cart_items
+  where user_id = p_user_id;
+
+  return query
+  select v_order_id, v_order_code, v_subtotal, v_shipping_fee, v_total;
+end;
+$$;
+
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
@@ -157,6 +317,7 @@ grant select, insert, update, delete on public.cart_items to authenticated;
 grant select, update on public.orders to authenticated;
 grant select on public.order_items to authenticated;
 grant select on public.payments to authenticated;
+grant execute on function public.create_order_from_cart(uuid, text, text, text, text, text) to authenticated;
 
 drop policy if exists "profiles_select_own_or_admin" on public.profiles;
 create policy "profiles_select_own_or_admin"
